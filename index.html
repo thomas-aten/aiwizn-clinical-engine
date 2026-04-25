@@ -2971,6 +2971,8 @@ body { font-size: 15px; }
 
 <script>
 
+
+
 /* SCRIPT_TAG_PRESENT */
 // Length-neutrality notice — prevents answer-length bias cue
 function injectLengthNotices() {
@@ -4253,6 +4255,7 @@ document.addEventListener('click', function(e) {
     v5ShowQuickNav(nodeId);
   }, 2500);
 
+  if (window.v5State !== v5State) window.v5State = v5State;
 }, true); // capture phase — runs before v4's bubble phase listener
 
 // ── BRANCH CONSEQUENCES ───────────────────────────────────────
@@ -4655,6 +4658,7 @@ startSession = function() {
   _v4StartSession();
   // Reset v5 state
   v5State = {firstChoices:{}, revisions:{}, selfCorrected:[], responseLatency:{}, nodeOpenedAt:{}, rapidClickCount:0, retestFirstChoices:{}};
+  window.v5State = v5State; // re-sync after reset;
   _retestShown = false;
   // Clear formative panels and branch consequences
   document.querySelectorAll('.fp').forEach(function(el) { el.classList.remove('fvis'); el.style.display=''; el.style.opacity=''; });
