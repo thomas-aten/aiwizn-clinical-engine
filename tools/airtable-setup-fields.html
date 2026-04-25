@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AIWIZN — Create Airtable Fields</title>
+<style>
+  body{font-family:'JetBrains Mono',monospace;background:#0a1826;color:#e8f0f8;padding:32px;max-width:760px;margin:0 auto}
+  h2{color:#00edb4;letter-spacing:.1em;font-size:18px}
+  .card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 18px;margin:8px 0;font-size:13px}
+  .ok{border-color:#00edb4;background:rgba(0,237,180,.06)}
+  .err{border-color:#ef4444;background:rgba(239,68,68,.06);color:#fca5a5}
+  .warn{border-color:#f59e0b;background:rgba(245,158,11,.06);color:#fde68a}
+  .info{color:#94a3b8}
+  .label{color:#00edb4;font-weight:bold}
+  button{background:#00edb4;color:#0a1826;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-family:monospace;font-weight:bold;cursor:pointer;letter-spacing:.05em;margin:4px}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  button.sec{background:transparent;color:#00edb4;border:1px solid #00edb4}
+  progress{width:100%;height:8px;border-radius:4px;margin:8px 0;accent-color:#00edb4}
+  input{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:#e8f0f8;padding:8px 12px;font-family:monospace;font-size:13px;width:100%;box-sizing:border-box;margin:4px 0}
+  .step{background:rgba(0,237,180,.1);border-left:3px solid #00edb4;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0}
+</style>
+</head>
+<body>
+<h2>⚕ AIWIZN — AIRTABLE FIELD SETUP</h2>
+<p class="info">This page creates all 44 required fields in your Sessions table automatically.<br>
+Requires a token with <strong style="color:#00edb4">schema.bases:write</strong> scope.</p>
+
+<div class="step">
+  <strong>Step 1 — Enter your token</strong><br>
+  <span class="info">You need a token with: data.records:write + schema.bases:read + schema.bases:write</span><br>
+  <a href="https://airtable.com/create/tokens" target="_blank" style="color:#00edb4">→ Create/update token at airtable.com/create/tokens</a>
+  <input id="tokenInput" type="text" placeholder="patXXXXXX.YYYYYY..." value="patBlGyrpOTqLaVcH.c0d181987d8ddbc22064d6e50fa40f969cff47b5a3d0125a4f741d62bae75c3c">
+</div>
+
+<button id="btnCreate" onclick="createAllFields()">⚡ CREATE ALL 44 FIELDS</button>
+<button class="sec" onclick="checkFields()">🔍 CHECK EXISTING FIELDS</button>
+<button class="sec" onclick="document.getElementById('log').innerHTML=''">✕ CLEAR</button>
+
+<progress id="prog" value="0" max="44" style="display:none"></progress>
+<div id="log"></div>
+
+<script>
+const BASE_ID = 'appyhKYSRiLx3cr24';
+const TABLE   = 'Sessions';
+
+const FIELD_DEFS = [
+  {name:'Session ID',          type:'number',          options:{precision:0}},
+  {name:'Nurse Name',          type:'singleLineText'},
+  {name:'Unit',                type:'singleLineText'},
+  {name:'Date',                type:'singleLineText'},
+  {name:'Timestamp',           type:'singleLineText'},
+  {name:'NWI %',               type:'number',          options:{precision:0}},
+  {name:'Total Nodes',         type:'number',          options:{precision:0}},
+  {name:'Expert',              type:'number',          options:{precision:0}},
+  {name:'Gap',                 type:'number',          options:{precision:0}},
+  {name:'Mid',                 type:'number',          options:{precision:0}},
+  {name:'S1A STEMI',           type:'singleLineText'},
+  {name:'S1A2 SBAR',           type:'singleLineText'},
+  {name:'S1B1 tPA Challenge 1',type:'singleLineText'},
+  {name:'S1B2 tPA Challenge 2',type:'singleLineText'},
+  {name:'S1C DNR Ethics',      type:'singleLineText'},
+  {name:'S2A Stroke FAST',     type:'singleLineText'},
+  {name:'S2A2 SDM Consent',    type:'singleLineText'},
+  {name:'S2B tPA Window',      type:'singleLineText'},
+  {name:'S2C Language',        type:'singleLineText'},
+  {name:'S3A Sepsis Recog',    type:'singleLineText'},
+  {name:'S3B 1hr Bundle',      type:'singleLineText'},
+  {name:'S3C Septic Shock',    type:'singleLineText'},
+  {name:'S3C2 Moral Resilience',type:'singleLineText'},
+  {name:'RT-01 Retest',        type:'singleLineText'},
+  {name:'D1 Ambiguity',        type:'number',          options:{precision:0}},
+  {name:'D2 Comm',             type:'number',          options:{precision:0}},
+  {name:'D3 Ethics',           type:'number',          options:{precision:0}},
+  {name:'D4 Psych Safety',     type:'number',          options:{precision:0}},
+  {name:'D5 Deterioration',    type:'number',          options:{precision:0}},
+  {name:'D6 Pharmacology',     type:'number',          options:{precision:0}},
+  {name:'D7 SBAR',             type:'number',          options:{precision:0}},
+  {name:'D8 Prioritisation',   type:'number',          options:{precision:0}},
+  {name:'D9 Cultural',         type:'number',          options:{precision:0}},
+  {name:'D11 Social',          type:'number',          options:{precision:0}},
+  {name:'D12 Moral',           type:'number',          options:{precision:0}},
+  {name:'Rapid Clicks',        type:'number',          options:{precision:0}},
+  {name:'Backtracks',          type:'number',          options:{precision:0}},
+  {name:'Self-Corrections',    type:'number',          options:{precision:0}},
+  {name:'Total Revisions',     type:'number',          options:{precision:0}},
+  {name:'Strong Revisions',    type:'number',          options:{precision:0}},
+  {name:'Partial Revisions',   type:'number',          options:{precision:0}},
+  {name:'Backslides',          type:'number',          options:{precision:0}},
+  {name:'Confirmed Gaps',      type:'number',          options:{precision:0}},
+  {name:'ARIA Engagements',    type:'number',          options:{precision:0}},
+  {name:'Avg Decision (s)',    type:'number',          options:{precision:1}},
+  {name:'Avg Inter-choice (s)',type:'number',          options:{precision:1}},
+  {name:'Position Bias (A%)', type:'number',          options:{precision:0}},
+  {name:'Retest RT-01',        type:'singleLineText'},
+  {name:'Retest vs S3A',       type:'singleLineText'},
+  {name:'Reflection',          type:'multilineText'}
+];
+
+function getToken() { return document.getElementById('tokenInput').value.trim(); }
+
+function log(msg, cls='card') {
+  document.getElementById('log').innerHTML += `<div class="${cls}">${msg}</div>`;
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+async function getTableId(TOKEN) {
+  const r = await fetch(`https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`, {
+    headers: { Authorization: 'Bearer ' + TOKEN }
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(`Meta API ${r.status}: ${(d.error||{}).type} — ${(d.error||{}).message}`);
+  const tbl = (d.tables||[]).find(t => t.name === TABLE);
+  if (!tbl) throw new Error(`Table "${TABLE}" not found. Tables: ${(d.tables||[]).map(t=>t.name).join(', ')}`);
+  return { id: tbl.id, existing: tbl.fields.map(f=>f.name) };
+}
+
+async function checkFields() {
+  const TOKEN = getToken();
+  log('Checking fields...', 'card info');
+  try {
+    const {id, existing} = await getTableId(TOKEN);
+    const missing = FIELD_DEFS.filter(f => !existing.includes(f.name)).map(f=>f.name);
+    const present = FIELD_DEFS.filter(f =>  existing.includes(f.name)).map(f=>f.name);
+    log(`✓ Table found (ID: ${id})<br>${present.length}/${FIELD_DEFS.length} fields exist.<br>
+         ${missing.length ? `<span style="color:#f59e0b">Missing: ${missing.join(', ')}</span>` : '<span style="color:#00edb4">All fields present! ✓</span>'}`, 
+        missing.length ? 'card warn' : 'card ok');
+  } catch(e) {
+    log(`✗ ${e.message}<br><br>
+         <strong>If you see INVALID_PERMISSIONS:</strong><br>
+         Your token needs <strong>schema.bases:read</strong> and <strong>schema.bases:write</strong> scopes.<br>
+         <a href="https://airtable.com/create/tokens" target="_blank" style="color:#00edb4">Recreate token →</a>`, 'card err');
+  }
+}
+
+async function createAllFields() {
+  const TOKEN = getToken();
+  const btn = document.getElementById('btnCreate');
+  const prog = document.getElementById('prog');
+  btn.disabled = true;
+  prog.style.display = 'block';
+  prog.value = 0;
+
+  log('Getting table info...', 'card info');
+  let tableId, existing;
+  try {
+    const info = await getTableId(TOKEN);
+    tableId = info.id; existing = info.existing;
+    log(`✓ Table found — ${existing.length} fields already exist`, 'card ok');
+  } catch(e) {
+    log(`✗ Cannot read table: ${e.message}<br><br>
+         <strong>Fix:</strong> Recreate your token at <a href="https://airtable.com/create/tokens" target="_blank" style="color:#00edb4">airtable.com/create/tokens</a><br>
+         Required scopes: data.records:write + <strong>schema.bases:read</strong> + <strong>schema.bases:write</strong>`, 'card err');
+    btn.disabled = false; prog.style.display = 'none'; return;
+  }
+
+  const toCreate = FIELD_DEFS.filter(f => !existing.includes(f.name));
+  if (toCreate.length === 0) {
+    log('✅ All 44 fields already exist! No action needed.', 'card ok');
+    btn.disabled = false; prog.style.display = 'none'; return;
+  }
+
+  log(`Creating ${toCreate.length} missing fields...`, 'card info');
+  let created = 0, failed = [];
+
+  for (const field of toCreate) {
+    const body = { name: field.name, type: field.type };
+    if (field.options) body.options = field.options;
+
+    try {
+      const r = await fetch(
+        `https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables/${tableId}/fields`,
+        { method:'POST', headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},
+          body: JSON.stringify(body) }
+      );
+      const d = await r.json();
+      if (r.ok) {
+        created++;
+        prog.value = existing.length + created;
+        log(`✓ Created: <strong>${field.name}</strong> (${field.type})`, 'card ok');
+      } else {
+        failed.push(field.name + ': ' + ((d.error||{}).message||r.status));
+        log(`⚠ Skipped <strong>${field.name}</strong>: ${(d.error||{}).message||r.status}`, 'card warn');
+      }
+    } catch(e) {
+      failed.push(field.name + ': ' + e.message);
+    }
+    await new Promise(res => setTimeout(res, 120)); // rate limit
+  }
+
+  if (failed.length === 0) {
+    log(`✅ <strong>ALL ${created} FIELDS CREATED SUCCESSFULLY!</strong><br>
+         Your Sessions table now has all 44 fields.<br>
+         Open the AIWIZN app, complete a session, and hit Save — data will appear in Airtable.`, 'card ok');
+  } else {
+    log(`Created ${created}/${toCreate.length}. Failed: ${failed.join('; ')}`, 'card warn');
+  }
+  btn.disabled = false;
+}
+</script>
+</body>
+</html>

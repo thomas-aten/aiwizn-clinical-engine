@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AIWIZN — Airtable Full Diagnostic</title>
+<style>
+  body { font-family: 'JetBrains Mono', monospace; background: #0a1826; color: #e8f0f8;
+         padding: 32px; max-width: 800px; margin: 0 auto; }
+  h2 { color: #00edb4; font-size: 18px; letter-spacing: .1em; }
+  .card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+          border-radius: 10px; padding: 16px 20px; margin: 10px 0; font-size: 13px; }
+  .ok   { border-color: #00edb4; background: rgba(0,237,180,.06); }
+  .err  { border-color: #ef4444; background: rgba(239,68,68,.06); color: #fca5a5; }
+  .warn { border-color: #f59e0b; background: rgba(245,158,11,.06); color: #fde68a; }
+  .info { color: #94a3b8; }
+  .label { color: #00edb4; font-weight: bold; }
+  button { background: #00edb4; color: #0a1826; border: none; padding: 12px 28px;
+           border-radius: 8px; font-size: 14px; font-family: monospace; font-weight: bold;
+           cursor: pointer; letter-spacing: .05em; margin: 4px; }
+  button:hover { background: #00c896; }
+  button.sec { background: transparent; color: #00edb4; border: 1px solid #00edb4; }
+  #log { margin-top: 16px; }
+  pre  { margin: 4px 0; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+  .field-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 8px; }
+  .field-tag { background: rgba(0,237,180,.12); color: #00edb4; border-radius: 4px;
+               padding: 3px 8px; font-size: 11px; }
+  .field-missing { background: rgba(239,68,68,.12); color: #fca5a5; border-radius: 4px;
+                   padding: 3px 8px; font-size: 11px; }
+</style>
+</head>
+<body>
+<h2>⚕ AIWIZN — AIRTABLE FULL DIAGNOSTIC</h2>
+<div class="info" style="margin-bottom:16px;font-size:12px">
+  Token: patBlGyrpOTqLaVcH... &nbsp;|&nbsp; Base: appyhKYSRiLx3cr24 &nbsp;|&nbsp; Table: Sessions
+</div>
+
+<button onclick="runAll()">▶ RUN FULL DIAGNOSTIC</button>
+<button class="sec" onclick="postLiveRecord()">📤 POST LIVE TEST RECORD</button>
+<button class="sec" onclick="document.getElementById('log').innerHTML=''">✕ CLEAR</button>
+
+<div id="log"></div>
+
+<script>
+const TOKEN   = 'patBlGyrpOTqLaVcH.c0d181987d8ddbc22064d6e50fa40f969cff47b5a3d0125a4f741d62bae75c3c';
+const BASE_ID = 'appyhKYSRiLx3cr24';
+const TABLE   = 'Sessions';
+
+// All 44 expected fields
+const EXPECTED_FIELDS = [
+  'Session ID','Nurse Name','Unit','Date','Timestamp',
+  'NWI %','Total Nodes','Expert','Gap','Mid',
+  'S1A STEMI','S1A2 SBAR','S1B1 tPA Challenge 1','S1B2 tPA Challenge 2','S1C DNR Ethics',
+  'S2A Stroke FAST','S2A2 SDM Consent','S2B tPA Window','S2C Language',
+  'S3A Sepsis Recog','S3B 1hr Bundle','S3C Septic Shock','S3C2 Moral Resilience','RT-01 Retest',
+  'D1 Ambiguity','D2 Comm','D3 Ethics','D4 Psych Safety','D5 Deterioration',
+  'D6 Pharmacology','D7 SBAR','D8 Prioritisation','D9 Cultural','D11 Social','D12 Moral',
+  'Rapid Clicks','Backtracks','Self-Corrections','Total Revisions','Strong Revisions',
+  'Partial Revisions','Backslides','Confirmed Gaps','ARIA Engagements',
+  'Avg Decision (s)','Avg Inter-choice (s)','Position Bias (A%)',
+  'Retest RT-01','Retest vs S3A','Reflection'
+];
+
+function log(msg, cls='card') {
+  document.getElementById('log').innerHTML += `<div class="${cls}">${msg}</div>`;
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+async function runAll() {
+  document.getElementById('log').innerHTML = '';
+  log(`<span class="label">STEP 1</span> — Token identity check`, 'card info');
+
+  // 1. whoami
+  try {
+    const r = await fetch('https://api.airtable.com/v0/meta/whoami', {
+      headers: { Authorization: 'Bearer ' + TOKEN }
+    });
+    const d = await r.json();
+    if (r.ok) {
+      log(`✓ <span class="label">Token valid</span> — User: ${d.id}<br>Scopes: ${(d.scopes||[]).join(', ')||'(none listed)'}`, 'card ok');
+    } else {
+      log(`✗ Token rejected ${r.status}: ${JSON.stringify(d)}`, 'card err');
+      return;
+    }
+  } catch(e) { log(`✗ Network error: ${e.message}`, 'card err'); return; }
+
+  // 2. List tables + fields
+  log(`<span class="label">STEP 2</span> — Base & table check`, 'card info');
+  let existingFields = [];
+  try {
+    const r = await fetch(`https://api.airtable.com/v0/meta/bases/${BASE_ID}/tables`, {
+      headers: { Authorization: 'Bearer ' + TOKEN }
+    });
+    const d = await r.json();
+    if (!r.ok) { log(`✗ Base error ${r.status}: ${JSON.stringify(d)}`, 'card err'); return; }
+    
+    const tables = d.tables || [];
+    const tbl = tables.find(t => t.name === TABLE);
+    if (!tbl) {
+      log(`✗ Table "${TABLE}" not found. Available tables: ${tables.map(t=>t.name).join(', ')}`, 'card err');
+      return;
+    }
+    existingFields = tbl.fields.map(f => f.name);
+    log(`✓ Table "<span class="label">${TABLE}</span>" found — ${existingFields.length} fields currently defined`, 'card ok');
+
+    // Field audit
+    const present = EXPECTED_FIELDS.filter(f => existingFields.includes(f));
+    const missing = EXPECTED_FIELDS.filter(f => !existingFields.includes(f));
+    const extra   = existingFields.filter(f => !EXPECTED_FIELDS.includes(f));
+
+    let fieldHtml = `<b>${present.length}/${EXPECTED_FIELDS.length} expected fields present</b><div class="field-grid">`;
+    EXPECTED_FIELDS.forEach(f => {
+      const cls = existingFields.includes(f) ? 'field-tag' : 'field-missing';
+      fieldHtml += `<span class="${cls}">${f}</span>`;
+    });
+    fieldHtml += '</div>';
+    if (extra.length) fieldHtml += `<br><b>Extra fields (not in spec):</b> ${extra.join(', ')}`;
+    if (missing.length) {
+      fieldHtml += `<br><br>⚠ ${missing.length} fields missing — they will be AUTO-CREATED on first session save.`;
+      log(fieldHtml, 'card warn');
+    } else {
+      log(fieldHtml, 'card ok');
+    }
+  } catch(e) { log(`✗ Error: ${e.message}`, 'card err'); return; }
+
+  // 3. Check existing records
+  log(`<span class="label">STEP 3</span> — Existing records`, 'card info');
+  try {
+    const r = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}?maxRecords=5&sort[0][field]=Session+ID&sort[0][direction]=desc`,
+      { headers: { Authorization: 'Bearer ' + TOKEN } }
+    );
+    const d = await r.json();
+    if (!r.ok) { log(`✗ List error ${r.status}: ${JSON.stringify(d)}`, 'card err'); }
+    else {
+      const recs = d.records || [];
+      if (recs.length === 0) {
+        log(`ℹ Table is empty — no session records yet. Use "POST LIVE TEST RECORD" to verify writing works.`, 'card warn');
+      } else {
+        let html = `✓ <b>${recs.length} recent record(s):</b><br>`;
+        recs.forEach(rec => {
+          const f = rec.fields;
+          html += `<pre>ID:${rec.id}  Nurse:${f['Nurse Name']||'?'}  Date:${f['Date']||'?'}  NWI:${f['NWI %']||'?'}%</pre>`;
+        });
+        log(html, 'card ok');
+      }
+    }
+  } catch(e) { log(`✗ Error: ${e.message}`, 'card err'); }
+
+  log(`<span class="label">DIAGNOSTIC COMPLETE</span> — Click "POST LIVE TEST RECORD" to verify write access.`, 'card ok');
+}
+
+async function postLiveRecord() {
+  log(`<span class="label">POSTING</span> test record to Airtable...`, 'card info');
+  try {
+    const r = await fetch(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}`,
+      {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: {
+          'Session ID':   Date.now(),
+          'Nurse Name':   'DIAGNOSTIC TEST',
+          'Unit':         'AIWIZN System Check',
+          'Date':         new Date().toISOString().split('T')[0],
+          'Timestamp':    new Date().toISOString(),
+          'NWI %':        88,
+          'Total Nodes':  5,
+          'Expert':       4,
+          'Gap':          1,
+          'Mid':          0,
+          'S1A STEMI':    'expert',
+          'S1C DNR Ethics':'gap',
+          'D7 SBAR':      92,
+          'Reflection':   'Airtable diagnostic test — safe to delete'
+        }})
+      }
+    );
+    const d = await r.json();
+    if (r.ok) {
+      log(`✅ <b>WRITE CONFIRMED</b> — Record created!<br>
+           Record ID: <b>${d.id}</b><br>
+           Fields written: ${Object.keys(d.fields||{}).join(', ')}<br><br>
+           Check your Airtable base — look for "DIAGNOSTIC TEST" row.`, 'card ok');
+    } else {
+      const errType = (d.error&&d.error.type)||'';
+      const errMsg  = (d.error&&d.error.message)||JSON.stringify(d);
+      if (errType === 'UNKNOWN_FIELD_NAME') {
+        log(`⚠ Field "${errMsg.match(/"([^"]+)"/)?.[1]}" doesn't exist yet.<br>
+             This is expected on first run — the AIWIZN app auto-creates fields.<br>
+             The self-healing logic in the HTML will handle this automatically.`, 'card warn');
+      } else {
+        log(`✗ Write failed ${r.status}: ${errType} — ${errMsg}`, 'card err');
+      }
+    }
+  } catch(e) { log(`✗ Error: ${e.message}`, 'card err'); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+AIWIZN AIRTABLE SETUP GUIDE
+============================
+Total time: ~5 minutes
+Cost: Free (Airtable free plan covers up to 1,000 records)
+
+STEP 1 — Create a free Airtable account
+  → airtable.com → Sign up
+
+STEP 2 — Create the base
+  → Click "+ Add a base"
+  → "Start from scratch"
+  → Name it: AIWIZN Clinical Data
+  → Click "Create"
+
+STEP 3 — Rename the table
+  → Click the default tab "Table 1" at the bottom
+  → Rename it to: Sessions
+  (Exact name required — the app uses "Sessions")
+
+STEP 4 — Leave fields empty (auto-created on first submission)
+  The app sends all fields automatically on the first
+  nurse session save. Airtable creates them all at once.
+  No manual field setup needed.
+
+STEP 5 — Get your Personal Access Token
+  → airtable.com/create/tokens
+  → Click "+ Add a token"
+  → Name: AIWIZN
+  → Scopes: add data.records:write + data.records:read
+  → Access: select your AIWIZN Clinical Data base
+  → Click "Create token"
+  → COPY the full token starting with "pat..."
+    (you can only see it once!)
+
+STEP 6 — Get your Base ID
+  → Open your AIWIZN base
+  → Look at the URL: airtable.com/appXXXXXXXXXXXXXX/...
+  → The "appXXXXXXXXXXXXXX" part is your Base ID
+
+STEP 7 — Add both to the HTML file
+  → Open aiwizn-clinical-final.html in any text editor
+  → Find these two lines (near the bottom):
+      var AIRTABLE_TOKEN   = '';
+      var AIRTABLE_BASE_ID = '';
+  → Replace the empty quotes:
+      var AIRTABLE_TOKEN   = 'patXXXXXXXXXXXXXX';
+      var AIRTABLE_BASE_ID = 'appXXXXXXXXXXXXXX';
+  → Save the file
+
+STEP 8 — Deploy to GitHub Pages (or test locally)
+  → git add . && git commit -m "Add Airtable" && git push
+
+STEP 9 — Test it
+  → Open the app, complete a scenario, click "Save to Dashboard"
+  → Check your Airtable base — new row appears within seconds
+
+TROUBLESHOOTING
+  "AUTHENTICATION_REQUIRED" — token is wrong or expired
+  → Create a new token at airtable.com/create/tokens
+
+  "NOT_FOUND" — base ID is wrong
+  → Check the URL of your base for the appXXX part
+
+  "TABLE_NOT_FOUND" — table name mismatch
+  → Make sure the table is named exactly "Sessions"
+
+  Nothing appears in Airtable — open Chrome DevTools console
+  → Look for "AIWIZN Airtable" messages
+
+WHAT THE EDUCATOR SEES IN AIRTABLE
+  Each row = one nurse session, with:
+  - Nurse Name, Unit, Date, Timestamp
+  - NWI % (colour-code manually with Airtable conditional formatting)
+  - All 14 per-node first choices (gap/mid/expert)
+  - All 11 domain scores
+  - Full COGNITA stealth profile:
+    Rapid clicks, backtracks, self-corrections,
+    revision quality, confirmed gaps, ARIA engagements,
+    avg decision time, position bias %
+  - Retest result (improved/consistent/plateaued/regressed)
+  - Post-session reflection notes
+
+AIRTABLE VIEWS TO CREATE
+  1. Grid view (default) — all sessions
+  2. Gallery view grouped by "Nurse Name" — per-nurse history
+  3. Gallery view with NWI % colour coding — at-a-glance
+  4. Filter view: NWI < 55 — nurses needing support
+  5. Filter view: Backslides > 0 — flag for educator review
+
+AIRTABLE AUTOMATIONS (optional, free tier)
+  → Automations → "When record created" → send email to educator
+  → Useful for getting notified when a nurse completes a session
+
+© AIWIZN / ATEN Inc 2026 · Private & Confidential · IMAGINATION UNLIMITED
+Thomas@ateninc.com · +1.919.341.8234

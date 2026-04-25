@@ -1,0 +1,1 @@
+{"name":"aiwizn-clinical-engine","version":"5.0.0","scripts":{"start":"npx serve@14 . --listen 3000 --single"},"author":{"name":"AIWIZN / ATEN Inc","email":"Thomas@ateninc.com"},"license":"UNLICENSED","private":true}
