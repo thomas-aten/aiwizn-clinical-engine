@@ -4521,8 +4521,8 @@ function v5EnhancePersona() {
     ? `<div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--txt3)">Revisions: <strong style="color:var(--navy)">`+revCnt+`</strong> &nbsp;·&nbsp; Self-corrections (gap→expert): <strong style="color:var(--teal-d)">`+selfCorr+`</strong></div>`
     : '';
 
-  var rapid = v5State.rapidClickCount >= 4
-    ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--crimson)">Velocity flag: ${v5State.rapidClickCount} choices made in under 4 seconds. Results should be reviewed in a supervised context.</div>`
+  var rapid = _v5ep.rapidClickCount >= 4
+    ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--crimson)">Velocity flag: ${_v5ep.rapidClickCount} choices made in under 4 seconds. Results should be reviewed in a supervised context.</div>`
     : '';
 
   var narrativeCard = `
