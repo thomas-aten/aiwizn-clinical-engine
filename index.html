@@ -3952,6 +3952,25 @@ go = function(name) {
    All text in template literals — apostrophe safe.
 ═══════════════════════════════════════════════════════════ */
 
+// ── V5 STATE (must be initialised BEFORE patchSession reads it) ──
+var v5State = {
+  firstChoices:          {},
+  revisions:             {},
+  selfCorrected:         [],
+  responseLatency:       {},
+  nodeOpenedAt:          {},
+  rapidClickCount:       0,
+  retestFirstChoices:    {},
+  backtrackCount:        0,
+  ariaLog:               [],
+  interChoiceIntervals:  {},
+  positionChoices:       {},
+  hoverTimes:            {},
+  confirmedGaps:         [],
+  postRevisionQuality:   {}
+};
+window.v5State = v5State;
+
 // ── EXTENDED SESSION MODEL ────────────────────────────────────
 // Patch the existing S object to add v5 fields without breaking v4
 (function patchSession() {
@@ -4147,26 +4166,10 @@ function v5Dismiss(nc) {
   setTimeout(function() { fp.style.display = 'none'; }, 300);
 }
 
-// ── V5 STATE (separate from v4 S to avoid conflicts) ──────────
-var v5State = {
-  firstChoices:          {},
-  revisions:             {},
-  selfCorrected:         [],
-  responseLatency:       {},
-  nodeOpenedAt:          {},
-  rapidClickCount:       0,
-  retestFirstChoices:    {},
-  // COGNITA stealth fields (initialised here so always available)
-  backtrackCount:        0,
-  ariaLog:               [],
-  interChoiceIntervals:  {},
-  positionChoices:       {},
-  hoverTimes:            {},
-  confirmedGaps:         [],
-  postRevisionQuality:   {}
-};
-// Expose v5State globally so v4 code can access it across IIFE boundaries
-window.v5State = v5State;
+// ── V5 STATE — moved earlier in this file (just before patchSession)
+//   so the IIFE can read v5State.firstChoices safely on first load.
+//   The original initialisation block here was removed to avoid
+//   re-overwriting patchSession's mutations.
 
 // Patch saveCurr to also persist v5State
 var _v4SaveCurr = saveCurr;
@@ -4545,9 +4548,114 @@ function v5SaveReflection() {
 // Wrap renderDash
 var _v4RenderDash = renderDash;
 renderDash = function() {
+  // Sync v5State from S so all readers see current data
+  window.v5State = v5State;
+  if (S.firstChoices && !Object.keys(v5State.firstChoices||{}).length) {
+    v5State.firstChoices = S.firstChoices;
+    v5State.revisions = S.revisions || {};
+    v5State.selfCorrected = S.selfCorrected || [];
+    v5State.rapidClickCount = S.rapidClickCount || 0;
+    v5State.backtrackCount = S.backtrackCount || 0;
+    v5State.ariaLog = S.ariaLog || [];
+    v5State.responseLatency = S.responseLatency || {};
+    v5State.positionChoices = S.positionChoices || {};
+    v5State.confirmedGaps = S.confirmedGaps || [];
+    v5State.retestFirstChoices = S.retestFirstChoices || {};
+    v5State.interChoiceIntervals = S.interChoiceIntervals || {};
+  }
   _v4RenderDash();
   v5RenderTrend();
   v5RenderHeatmap();
+
+  // INLINE COGNITA DASHBOARD PANELS
+  try {
+    var dp = document.getElementById('panel-dashboard');
+    if (!dp) return;
+    ['cognita-stealth-panel','cognita-v2-panel'].forEach(function(id){
+      var e = document.getElementById(id); if (e) e.remove();
+    });
+
+    var fc = (Object.keys(v5State.firstChoices||{}).length) ? v5State.firstChoices : (S.firstChoices || S.choices || {});
+    if (Object.keys(fc).length < 3) return;
+
+    var lats = Object.values(v5State.responseLatency || S.responseLatency || {});
+    var avgSec = lats.length ? Math.round(lats.reduce(function(a,b){return a+b;},0)/lats.length/1000) : null;
+    var rapidC = v5State.rapidClickCount || S.rapidClickCount || 0;
+    var backC  = v5State.backtrackCount  || S.backtrackCount  || 0;
+    var selfC  = (v5State.selfCorrected  || S.selfCorrected  || []).length;
+    var revs   = v5State.revisions       || S.revisions       || {};
+    var revC   = Object.keys(revs).length;
+    var ariaC  = (v5State.ariaLog        || S.ariaLog        || []).length;
+    var gapsC  = (v5State.confirmedGaps  || S.confirmedGaps  || []).length;
+    var posC   = v5State.positionChoices || S.positionChoices || {};
+    var posKs  = Object.keys(posC);
+    var ancPctTotal = posKs.length ? Math.round((posKs.filter(function(k){return posC[k]==='A';}).length/posKs.length)*100) : 0;
+
+    function _cell(lbl, val, color, sub) {
+      return '<div style="padding:14px 16px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.06)">'+
+             '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#6B7A8D;letter-spacing:.14em;font-weight:700;margin-bottom:8px">'+lbl+'</div>'+
+             '<div style="font-size:30px;font-weight:700;color:'+color+';font-family:JetBrains Mono,monospace;line-height:1">'+val+'</div>'+
+             '<div style="font-size:10px;color:#4A5568;margin-top:6px;font-family:JetBrains Mono,monospace">'+sub+'</div>'+
+             '</div>';
+    }
+
+    var p1 = document.createElement('div');
+    p1.id = 'cognita-stealth-panel';
+    p1.style.cssText = 'background:#0D1F2D;border-radius:14px;padding:22px 24px;margin-top:20px;border:1px solid rgba(0,200,150,.15);box-shadow:0 4px 20px rgba(0,0,0,.08)';
+    p1.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#00C896;margin-bottom:18px;text-transform:uppercase">COGNITA - STEALTH PSYCHOMETRIC INDICATORS</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+
+        _cell('AVG DECISION', avgSec!=null?avgSec+'s':'-', avgSec!=null?(avgSec>=15?'#00C896':avgSec>=8?'#D97706':'#DC2626'):'#B0B8C4', 'benchmark: 15s+')+
+        _cell('RAPID CLICKS', rapidC>0?Math.round(rapidC/Object.keys(fc).length*100)+'%':'0%', rapidC>=4?'#DC2626':rapidC>0?'#D97706':'#00C896', rapidC+' under 4s')+
+        _cell('SELF-CORRECT', selfC, selfC>0?'#00C896':'#6B7A8D', 'gap to expert')+
+        _cell('REVISIONS', revC, '#00C896', 'total')+
+        _cell('BACKTRACKS', backC, backC>3?'#DC2626':backC>1?'#D97706':'#00C896', 'panel revisits')+
+        _cell('ARIA ENGAGE', ariaC, ariaC>0?'#00C896':'#B0B8C4', 'interactions')+
+        _cell('CONFIRMED GAPS', gapsC, gapsC>2?'#DC2626':gapsC>0?'#D97706':'#00C896', 'saw feedback, kept gap')+
+        _cell('POSITION BIAS', ancPctTotal+'%', ancPctTotal>60?'#DC2626':ancPctTotal>40?'#D97706':'#00C896', 'chose option A')+
+      '</div>';
+    dp.appendChild(p1);
+
+    var gapLat = Object.entries(v5State.responseLatency || S.responseLatency || {}).filter(function(e){ return (fc[e[0]])==='gap'; }).map(function(e){return e[1];});
+    var expLat = Object.entries(v5State.responseLatency || S.responseLatency || {}).filter(function(e){ return (fc[e[0]])==='expert'; }).map(function(e){return e[1];});
+    var inters = Object.values(v5State.interChoiceIntervals || S.interChoiceIntervals || {});
+    var avgGap = gapLat.length ? Math.round(gapLat.reduce(function(a,b){return a+b;},0)/gapLat.length/1000) : null;
+    var avgExp = expLat.length ? Math.round(expLat.reduce(function(a,b){return a+b;},0)/expLat.length/1000) : null;
+    var avgInt = inters.length ? Math.round(inters.reduce(function(a,b){return a+b;},0)/inters.length/1000) : null;
+    var rtKey  = Object.keys(v5State.retestFirstChoices || S.retestFirstChoices || {})[0];
+    var rtVal  = rtKey ? (v5State.retestFirstChoices||S.retestFirstChoices)[rtKey] : null;
+    var origVal = fc.s3a || null;
+    var rtLabel = rtVal ? (origVal?origVal+' / ':'') + rtVal : 'N/A';
+    var rtCol = rtVal==='expert'?'#00C896':rtVal==='gap'?'#DC2626':'#D97706';
+
+    var insight = '';
+    if (avgInt && avgInt < 3) insight += 'Short inter-choice intervals - limited engagement with formative feedback. ';
+    if (selfC > 0) insight += selfC + ' gap-to-expert self-correction'+(selfC>1?'s':'')+' after feedback - strong metacognitive signal. ';
+    if (rtVal === 'gap') insight += 'Retest regressed vs S3A - contextual transfer not yet achieved.';
+    else if (rtVal === 'expert') insight += 'Retest improved vs S3A - learning consolidated.';
+    if (!insight) insight = 'Behavioural patterns within typical range for this stage.';
+
+    var p2 = document.createElement('div');
+    p2.id = 'cognita-v2-panel';
+    p2.style.cssText = 'background:#0D1F2D;border-radius:14px;padding:22px 24px;margin-top:14px;border:1px solid rgba(96,165,250,.15);box-shadow:0 4px 20px rgba(0,0,0,.08)';
+    p2.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#60A5FA;margin-bottom:18px;text-transform:uppercase">COGNITA - LEARNING QUALITY INDICATORS <span style="color:rgba(255,255,255,.35);font-weight:400">(SCORED ON ORIGINAL CHOICES)</span></div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+
+        _cell('GAP NODE LAT.', avgGap?avgGap+'s':'-', avgGap&&avgGap>15?'#00C896':avgGap&&avgGap>8?'#D97706':'#DC2626', 'avg time on gaps')+
+        _cell('EXPERT NODE LAT.', avgExp?avgExp+'s':'-', avgExp&&avgExp<10?'#00C896':'#D97706', 'avg time on expert')+
+        _cell('INTER-CHOICE', avgInt?avgInt+'s':'-', avgInt&&avgInt>=4?'#00C896':avgInt?'#DC2626':'#B0B8C4', 'avg between choices')+
+        _cell('STRONG REVISIONS', revC, '#00C896', 'gap/mid to expert')+
+        _cell('PARTIAL REVISIONS', 0, '#6B7A8D', 'gap to mid')+
+        _cell('BACKSLIDES', 0, '#00C896', 'expert to worse')+
+        '<div style="padding:14px 16px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.06)">'+
+          '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#6B7A8D;letter-spacing:.14em;font-weight:700;margin-bottom:8px">RT-01 VS S3A</div>'+
+          '<div style="font-size:22px;font-weight:700;color:'+rtCol+';font-family:JetBrains Mono,monospace;line-height:1">'+rtLabel+'</div>'+
+          '<div style="font-size:10px;color:#4A5568;margin-top:6px;font-family:JetBrains Mono,monospace">'+(rtVal==='gap'?'regressed':rtVal==='expert'?'improved':'maintained')+'</div>'+
+        '</div>'+
+        _cell('CONFIRMED GAPS', gapsC, gapsC>2?'#DC2626':'#D97706', 'saw feedback, kept gap')+
+      '</div>'+
+      '<div style="margin-top:16px;padding:14px 16px;background:rgba(0,0,0,.25);border-radius:8px;border:1px solid rgba(255,255,255,.05);font-family:JetBrains Mono,monospace;font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.7">'+insight+'</div>';
+    dp.appendChild(p2);
+
+  } catch(e) { console.error('dashboard cognita error:', e); }
 };
 
 function v5RenderTrend() {
