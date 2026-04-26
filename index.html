@@ -2973,6 +2973,7 @@ body { font-size: 15px; }
 
 
 
+
 /* SCRIPT_TAG_PRESENT */
 // Length-neutrality notice — prevents answer-length bias cue
 function injectLengthNotices() {
@@ -3284,7 +3285,7 @@ function renderPersona() {
         <span class="ph-pill node">${total} Nodes</span>
         ${Object.keys(_v5.revisions||{}).length > 0 ? `<span class="ph-pill node">${Object.keys(_v5.revisions).length} Revision${Object.keys(_v5.revisions).length>1?'s':''}</span>` : ''}
       </div>
-      <div class="ph-narrative">${narrative}</div>
+      <div class="ph-narrative" style="display:none">${narrative}</div>
     </div>
   </div>`;
 
@@ -3549,6 +3550,8 @@ function startSession() {
 }
 
 function saveSession() {
+  // Ensure window.v5State is current before COGNITA panels render
+  if (typeof v5State !== 'undefined') window.v5State = v5State;
   if (!Object.keys(S.choices).length) { toast('Complete at least one scenario first','t-warn'); return; }
   // Merge all v5 stealth signals into S before saving
   S.firstChoices       = v5State.firstChoices;
@@ -4403,6 +4406,9 @@ renderPersona = function() {
 };
 
 function v5EnhancePersona() {
+  // Remove any existing enhance content to prevent duplicates
+  var existing = document.querySelectorAll('.pn-card, .pn-plan, .pn-retest, .pn-meta');
+  existing.forEach(function(el) { el.remove(); });
   var container = document.getElementById('persona-content');
   if (!container) return;
 
