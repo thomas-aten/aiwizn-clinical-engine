@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AIWIZN · Clinical Assessment Engine · NWI v4</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Supabase JS client (UMD build, exposes window.supabase) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --teal:#00C896;--teal-d:#00A87A;--teal-l:rgba(0,200,150,.1);
@@ -2972,10 +2974,6 @@ body { font-size: 15px; }
 <script>
 
 
-
-
-
-
 /* SCRIPT_TAG_PRESENT */
 // Length-neutrality notice — prevents answer-length bias cue
 function injectLengthNotices() {
@@ -3287,7 +3285,7 @@ function renderPersona() {
         <span class="ph-pill node">${total} Nodes</span>
         ${Object.keys(_v5.revisions||{}).length > 0 ? `<span class="ph-pill node">${Object.keys(_v5.revisions).length} Revision${Object.keys(_v5.revisions).length>1?'s':''}</span>` : ''}
       </div>
-      <div class="ph-narrative" style="display:none">${narrative}</div>
+      <div class="ph-narrative">${narrative}</div>
     </div>
   </div>`;
 
@@ -3552,8 +3550,6 @@ function startSession() {
 }
 
 function saveSession() {
-  // Ensure window.v5State is current before COGNITA panels render
-  if (typeof v5State !== 'undefined') window.v5State = v5State;
   if (!Object.keys(S.choices).length) { toast('Complete at least one scenario first','t-warn'); return; }
   // Merge all v5 stealth signals into S before saving
   S.firstChoices       = v5State.firstChoices;
@@ -4260,7 +4256,6 @@ document.addEventListener('click', function(e) {
     v5ShowQuickNav(nodeId);
   }, 2500);
 
-  if (window.v5State !== v5State) window.v5State = v5State;
 }, true); // capture phase — runs before v4's bubble phase listener
 
 // ── BRANCH CONSEQUENCES ───────────────────────────────────────
@@ -4400,116 +4395,21 @@ computeNWI = function() {
 // Wrap renderPersona to inject narrative + v5 sections
 var _v4RenderPersona = renderPersona;
 renderPersona = function() {
-  window.v5State = v5State;
-  if (S.firstChoices && !Object.keys(v5State.firstChoices||{}).length) {
-    v5State.firstChoices = S.firstChoices;
-    v5State.revisions = S.revisions || {};
-    v5State.selfCorrected = S.selfCorrected || [];
-    v5State.rapidClickCount = S.rapidClickCount || 0;
-    v5State.backtrackCount = S.backtrackCount || 0;
-    v5State.ariaLog = S.ariaLog || [];
-    v5State.responseLatency = S.responseLatency || {};
-    v5State.positionChoices = S.positionChoices || {};
-    v5State.confirmedGaps = S.confirmedGaps || [];
-    v5State.retestFirstChoices = S.retestFirstChoices || {};
-  }
   _v4RenderPersona();
-
-  // INLINE NARRATIVE BUILDER
-  try {
-    var _pc = document.getElementById('persona-content');
-    if (!_pc) return;
-    _pc.querySelectorAll('.pn-card').forEach(function(el){ el.remove(); });
-
-    var _fc = (Object.keys(v5State.firstChoices||{}).length) ? v5State.firstChoices : (S.firstChoices || S.choices || {});
-    var _total = Object.keys(_fc).length;
-    if (!_total) return;
-
-    var _exp = Object.values(_fc).filter(function(c){return c==='expert';}).length;
-    var _gap = Object.values(_fc).filter(function(c){return c==='gap';}).length;
-    var _nwi = computeNWI();
-    var _dom = computeDoms({choices:_fc});
-    var _sc  = (v5State.selfCorrected || S.selfCorrected || []);
-    var _rev = (v5State.revisions || S.revisions || {});
-    var _rapid = (v5State.rapidClickCount || S.rapidClickCount || 0);
-    var _retest = (v5State.retestFirstChoices || S.retestFirstChoices || {});
-
-    var _ranked = Object.entries(_dom).filter(function(e){return e[1]!=null;}).sort(function(a,b){return b[1]-a[1];});
-    var _topKey = _ranked[0] && _ranked[0][0];
-    var _botKey = _ranked[_ranked.length-1] && _ranked[_ranked.length-1][0];
-    var _DLS = {D1:'Ambiguity Tolerance',D2:'Therapeutic Communication',D3:'Ethical Reasoning',D4:'Psych Safety',D5:'Deterioration Recognition',D6:'Pharmacology',D7:'SBAR / Handover',D8:'Prioritisation',D9:'Cultural Humility',D11:'Social Complexity',D12:'Moral Resilience'};
-    var _topName = _topKey ? _DLS[_topKey] : 'Clinical reasoning';
-
-    var _STR = {
-      D1:'You hold uncertainty without rushing to false certainty - a hallmark of mature clinical reasoning.',
-      D2:'Your therapeutic communication creates the safety patients need to disclose what matters.',
-      D3:'You navigate ethical complexity with steadiness - the foundation of trustworthy practice.',
-      D4:'You build psychological safety in your team, where members feel safe to speak up.',
-      D5:'You recognise deterioration before it announces itself - the most protective skill in nursing.',
-      D6:'Your pharmacology reasoning is precise - you know what to give, what to avoid, and why.',
-      D7:'Your SBAR and handover discipline keeps critical information flowing without dropouts.',
-      D8:'Your prioritisation under pressure is reliable. The right patient gets the right attention at the right time.',
-      D9:'Cultural humility is integrated into your practice, directly reducing readmission and harm.',
-      D11:'You see the social complexity behind the clinical picture and adjust care accordingly.',
-      D12:'Your moral resilience holds up under pressure - you process difficult shifts rather than absorbing them.'
-    };
-    var _DEV = {
-      D1:'Practice naming uncertainty out loud. Building tolerance for not-knowing strengthens diagnostic reasoning.',
-      D2:'Try teach-back on every discharge: ask the patient to explain what they will watch for in their own words.',
-      D3:'Run difficult cases out loud - what is the right thing, what is the legal thing, where do they diverge.',
-      D4:'After the next critical event, ask what made it hard for anyone to speak up earlier. Safety builds one debrief at a time.',
-      D5:'Build the habit of NEWS check on every patient every hour. Early signals are subtle and need active looking.',
-      D6:'Keep a running list of the top 20 drugs in your specialty with key contraindications. Review weekly until automatic.',
-      D7:'Practice ISBAR with a peer: 60-second handover, full content, no missed elements.',
-      D8:'When overwhelmed, name the top 3 priorities out loud before acting. Externalising slows panic.',
-      D9:'Use professional interpreters for any encounter beyond basic comfort. Family translation introduces bias and risk.',
-      D11:'Add one social-determinant question to every history: housing stability, food access, support network.',
-      D12:'After difficult shifts, identify one thing you would do the same and one differently. Two minutes. The debrief habit prevents moral injury.'
-    };
-
-    var _stage = _nwi>=80?'proficient-expert stage':_nwi>=60?'competent stage':'advanced beginner stage';
-    var _narrative = 'This nurse presents at <strong>'+_stage+'</strong> with <strong>'+_exp+' expert-pattern response'+(_exp!==1?'s':'')+'</strong> across '+_total+' decision nodes (NWI <strong>'+_nwi+'%</strong>). Strongest demonstrated competency is in <strong>'+_topName+'</strong>. '+(_gap>0?_gap+' gap signal'+(_gap>1?'s':'')+' flagged. ':'No critical gaps detected. ')+(_sc.length?_sc.length+' self-correction'+(_sc.length>1?'s':'')+' from gap to expert - <strong>positive metacognitive indicator</strong>.':'');
-
-    var _retestKey = Object.keys(_retest)[0];
-    var _retestVal = _retestKey ? _retest[_retestKey] : null;
-    var _rev_count = Object.keys(_rev).length;
-
-    var _h = '<div class="pn-card">';
-    _h += '<div class="pn-lbl">PERSONA NARRATIVE - AUTO-GENERATED</div>';
-    _h += '<div class="pn-txt">'+_narrative+'</div>';
-    if (_topKey && _STR[_topKey]) _h += '<div class="pn-str"><div class="pn-sec-lbl">+ STRENGTH: '+(_DLS[_topKey]||'').toUpperCase()+'</div><div class="pn-sec-txt">'+_STR[_topKey]+'</div></div>';
-    if (_botKey && _botKey !== _topKey && _DEV[_botKey]) _h += '<div class="pn-dev"><div class="pn-sec-lbl">UPSKILL: '+(_DLS[_botKey]||'').toUpperCase()+'</div><div class="pn-sec-txt">'+_DEV[_botKey]+'</div></div>';
-    _h += '<div class="pn-plan"><div class="pn-plan-icon">TARGET</div><div class="pn-plan-body"><h4>CONTINUUM - DEVELOPMENT PLAN</h4><p>'+(_gap>=3?'Recommend preceptor review of gap-flagged nodes before independent practice. Reassessment after targeted practice in 2 to 4 weeks.':_gap>0?'Focused practice on '+_gap+' gap area'+(_gap>1?'s':'')+' recommended. Reassessment in 4 to 6 weeks.':'Strong foundation. Standard supervision pathway, reassessment at 6-month milestone.')+'</p></div></div>';
-    if (_retestKey && _retestVal) _h += '<div class="pn-retest">RETEST (Unannounced) - '+_retestKey.toUpperCase()+': <span style="color:'+(_retestVal==='expert'?'#00A87A':_retestVal==='gap'?'#DC2626':'#D97706')+'">'+_retestVal+'</span></div>';
-    _h += '<div class="pn-meta">Revisions: <span style="color:#1A3050;font-weight:700">'+_rev_count+'</span> · Self-corrections (gap to expert): <span style="color:#00A87A;font-weight:700">'+_sc.length+'</span></div>';
-    if (_rapid >= 4) _h += '<div style="margin-top:12px;padding:10px 14px;background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-radius:8px;font-size:11px;font-family:JetBrains Mono,monospace;color:#B43030">Velocity flag: '+_rapid+' choices made in under 4 seconds. Results should be reviewed in a supervised context.</div>';
-    _h += '</div>';
-    _pc.insertAdjacentHTML('beforeend', _h);
-  } catch(e) { console.error('persona narrative error:', e); }
-
+  // Update COGNITA stealth panel in persona
   setTimeout(v5RenderStealthPanel, 120);
+  v5EnhancePersona();
   v5ShowBadge();
 };
 
-
 function v5EnhancePersona() {
-  // Remove any existing enhance content to prevent duplicates
-  var existing = document.querySelectorAll('.pn-card, .pn-plan, .pn-retest, .pn-meta');
-  existing.forEach(function(el) { el.remove(); });
   var container = document.getElementById('persona-content');
   if (!container) return;
 
   var _v5ep = (typeof v5State !== "undefined" && v5State) || window.v5State || {};
-  var fc = (Object.keys(_v5ep.firstChoices||{}).length) ? _v5ep.firstChoices : (S.firstChoices || S.choices || {});
+  var fc = _v5ep.firstChoices || {};
   var total = Object.keys(fc).length;
   if (!total) return;
-  if (!Object.keys(_v5ep.firstChoices||{}).length && S.firstChoices) {
-    _v5ep.firstChoices = S.firstChoices;
-    _v5ep.revisions = _v5ep.revisions || S.revisions || {};
-    _v5ep.selfCorrected = _v5ep.selfCorrected || S.selfCorrected || [];
-    _v5ep.rapidClickCount = _v5ep.rapidClickCount || S.rapidClickCount || 0;
-    _v5ep.retestFirstChoices = _v5ep.retestFirstChoices || S.retestFirstChoices || {};
-  }
 
   var nwi = computeNWI();
   var expert = Object.values(fc).filter(function(c){return c==='expert';}).length;
@@ -4594,8 +4494,8 @@ function v5EnhancePersona() {
     ? `<div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--txt3)">Revisions: <strong style="color:var(--navy)">`+revCnt+`</strong> &nbsp;·&nbsp; Self-corrections (gap→expert): <strong style="color:var(--teal-d)">`+selfCorr+`</strong></div>`
     : '';
 
-  var rapid = _v5ep.rapidClickCount >= 4
-    ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--crimson)">Velocity flag: ${_v5ep.rapidClickCount} choices made in under 4 seconds. Results should be reviewed in a supervised context.</div>`
+  var rapid = v5State.rapidClickCount >= 4
+    ? `<div style="margin-top:8px;padding:8px 12px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--crimson)">Velocity flag: ${v5State.rapidClickCount} choices made in under 4 seconds. Results should be reviewed in a supervised context.</div>`
     : '';
 
   var narrativeCard = `
@@ -4758,7 +4658,6 @@ startSession = function() {
   _v4StartSession();
   // Reset v5 state
   v5State = {firstChoices:{}, revisions:{}, selfCorrected:[], responseLatency:{}, nodeOpenedAt:{}, rapidClickCount:0, retestFirstChoices:{}};
-  window.v5State = v5State; // re-sync after reset;
   _retestShown = false;
   // Clear formative panels and branch consequences
   document.querySelectorAll('.fp').forEach(function(el) { el.classList.remove('fvis'); el.style.display=''; el.style.opacity=''; });
@@ -5386,52 +5285,24 @@ function v5ToggleAriaReview() {
 
 
 /* ═══════════════════════════════════════════════════════════
-   AIRTABLE INTEGRATION — AIWIZN Multi-User Database
-   Self-healing: strips unknown fields and retries automatically.
-   Token needs: data.records:read + data.records:write only.
-   No schema scope required.
+   SUPABASE INTEGRATION — AIWIZN Multi-User Database
+   Replaces the previous Airtable backend.
+   Writes one row per completed session into
+   aiwizn.prototype_sessions on the Supabase project below.
 ═══════════════════════════════════════════════════════════ */
 
-var AIRTABLE_TOKEN   = 'patBlGyrpOTqLaVcH.c0d181987d8ddbc22064d6e50fa40f969cff47b5a3d0125a4f741d62bae75c3c';
-var AIRTABLE_BASE_ID = 'appyhKYSRiLx3cr24';
-var AIRTABLE_TABLE   = 'Sessions';
+var SUPABASE_URL      = 'https://scyfldezhztapttcyenr.supabase.co';
+// Publishable key — safe to ship in client code. Row-level security on
+// aiwizn.prototype_sessions limits what this key can do.
+var SUPABASE_ANON_KEY = 'sb_publishable_XVqZASfCKdWY-lOwnJOgvw_KN2nunZ5';
 
-// POST record — on 422 UNKNOWN_FIELD_NAME, strip that field and retry
-// Needs ONLY data.records:write scope (no Meta API)
-function atPostRecord(fields, attempt, skipped) {
-  attempt = attempt || 0;
-  skipped = skipped || [];
-  if (attempt > 55) return Promise.reject('Too many retries (' + skipped.length + ' fields skipped: ' + skipped.join(', ') + ')');
+var supabaseClient = (typeof window !== 'undefined' && window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } })
+  : null;
+if (!supabaseClient) console.warn('AIWIZN: supabase-js not loaded; persistence disabled');
 
-  var url = 'https://api.airtable.com/v0/' + AIRTABLE_BASE_ID + '/' + encodeURIComponent(AIRTABLE_TABLE);
-  return fetch(url, {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + AIRTABLE_TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fields: fields })
-  })
-  .then(function(r) { return r.json().then(function(d) { return { status: r.status, data: d }; }); })
-  .then(function(res) {
-    if (res.status === 200) {
-      if (skipped.length) console.log('AIWIZN Airtable: wrote record, skipped fields (not yet in table): ' + skipped.join(', '));
-      return res.data;
-    }
-    var errType = (res.data.error && res.data.error.type)    || '';
-    var errMsg  = (res.data.error && res.data.error.message) || '';
-    if (errType === 'UNKNOWN_FIELD_NAME') {
-      // Extract field name from: 'Unknown field name: "Session ID"'
-      var match = errMsg.match(/"([^"]+)"/);
-      var badField = match ? match[1] : null;
-      if (!badField) return Promise.reject('Cannot parse unknown field: ' + errMsg);
-      var newFields = {};
-      Object.keys(fields).forEach(function(k) { if (k !== badField) newFields[k] = fields[k]; });
-      return atPostRecord(newFields, attempt + 1, skipped.concat(badField));
-    }
-    return Promise.reject('Airtable ' + res.status + ': ' + errType + ' — ' + errMsg);
-  });
-}
-
-function sendToAirtable(session) {
-  if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) { console.log('AIWIZN: Airtable not configured'); return; }
+function sendToSupabase(session) {
+  if (!supabaseClient) { console.log('AIWIZN: Supabase not configured'); return; }
 
   var fc    = session.firstChoices || session.choices || {};
   var rfc   = session.retestFirstChoices || {};
@@ -5445,98 +5316,105 @@ function sendToAirtable(session) {
   try { dom = computeDoms ? computeDoms({ choices: fc }) : {}; } catch(e) {}
   function ds(d) { return dom[d] != null ? Math.round(dom[d] * 100) : null; }
 
-  var rq     = session.postRevisionQuality || {};
-  var strong = Object.values(rq).filter(function(r) { return r.quality === 'strong'; }).length;
-  var partial= Object.values(rq).filter(function(r) { return r.quality === 'partial'; }).length;
-  var backsl = Object.values(rq).filter(function(r) { return r.quality === 'backslide'; }).length;
+  var rq      = session.postRevisionQuality || {};
+  var strong  = Object.values(rq).filter(function(r) { return r.quality === 'strong'; }).length;
+  var partial = Object.values(rq).filter(function(r) { return r.quality === 'partial'; }).length;
+  var backsl  = Object.values(rq).filter(function(r) { return r.quality === 'backslide'; }).length;
 
   var lats   = Object.values(session.responseLatency || {});
   var avgLat = lats.length ? Math.round(lats.reduce(function(a,b){return a+b;},0)/lats.length/1000) : null;
   var ints   = Object.values(session.interChoiceIntervals || {});
   var avgInt = ints.length ? Math.round(ints.reduce(function(a,b){return a+b;},0)/ints.length/1000) : null;
 
-  var fields = {
-    'Session ID':   session.id || 0,
-    'Nurse Name':   session.nurse || '',
-    'Unit':         session.unit  || '',
-    'Date':         session.start ? new Date(session.start).toISOString().split('T')[0] : '',
-    'Timestamp':    new Date().toISOString(),
-    'NWI %':        nwi,
-    'Total Nodes':  total,
-    'Expert':       expert,
-    'Gap':          gap,
-    'Mid':          mid,
-    'S1A STEMI':            fc['s1a']   || '',
-    'S1A2 SBAR':            fc['s1a2']  || '',
-    'S1B1 tPA Challenge 1': fc['s1b_1'] || '',
-    'S1B2 tPA Challenge 2': fc['s1b_2'] || '',
-    'S1C DNR Ethics':       fc['s1c']   || '',
-    'S2A Stroke FAST':      fc['s2a']   || '',
-    'S2A2 SDM Consent':     fc['s2a2']  || '',
-    'S2B tPA Window':       fc['s2b']   || '',
-    'S2C Language':         fc['s2c']   || '',
-    'S3A Sepsis Recog':     fc['s3a']   || '',
-    'S3B 1hr Bundle':       fc['s3b']   || '',
-    'S3C Septic Shock':     fc['s3c']   || '',
-    'S3C2 Moral Resilience':fc['s3c2']  || '',
-    'RT-01 Retest':         rfc['rt1']  || '',
-    'D1 Ambiguity':    ds('D1'),
-    'D2 Comm':         ds('D2'),
-    'D3 Ethics':       ds('D3'),
-    'D4 Psych Safety': ds('D4'),
-    'D5 Deterioration':ds('D5'),
-    'D6 Pharmacology': ds('D6'),
-    'D7 SBAR':         ds('D7'),
-    'D8 Prioritisation':ds('D8'),
-    'D9 Cultural':     ds('D9'),
-    'D11 Social':      ds('D11'),
-    'D12 Moral':       ds('D12'),
-    'Rapid Clicks':        session.rapidClickCount || 0,
-    'Backtracks':          session.backtrackCount  || 0,
-    'Self-Corrections':    (session.selfCorrected  || []).length,
-    'Total Revisions':     Object.keys(session.revisions || {}).length,
-    'Strong Revisions':    strong,
-    'Partial Revisions':   partial,
-    'Backslides':          backsl,
-    'Confirmed Gaps':      (session.confirmedGaps  || []).length,
-    'ARIA Engagements':    (session.ariaLog || []).length,
-    'Avg Decision (s)':    avgLat,
-    'Avg Inter-choice (s)':avgInt,
-    'Position Bias (A%)':  (function() {
-      var pc = session.positionChoices || {};
-      var keys = Object.keys(pc);
-      if (!keys.length) return null;
-      return Math.round(keys.filter(function(k) { return pc[k] === 'A'; }).length / keys.length * 100);
-    })(),
-    'Retest RT-01':   rfc['rt1'] || '',
-    'Retest vs S3A':  (function() {
-      var rc = session.retestComparison || {};
-      if (!rc.rt1) return '';
-      if (rc.rt1.improved)   return 'improved';
-      if (rc.rt1.consistent) return 'consistent';
-      if (rc.rt1.regressed)  return 'regressed';
-      return 'plateaued';
-    })(),
-    'Reflection': session.reflection || ''
+  var positionBiasA = (function() {
+    var pc = session.positionChoices || {};
+    var keys = Object.keys(pc);
+    if (!keys.length) return null;
+    return Math.round(keys.filter(function(k) { return pc[k] === 'A'; }).length / keys.length * 100);
+  })();
+
+  var retestVsS3a = (function() {
+    var rc = session.retestComparison || {};
+    if (!rc.rt1) return null;
+    if (rc.rt1.improved)   return 'improved';
+    if (rc.rt1.consistent) return 'consistent';
+    if (rc.rt1.regressed)  return 'regressed';
+    return 'plateaued';
+  })();
+
+  var row = {
+    session_uid:      String(session.id || ''),
+    nurse_name:       session.nurse || '',
+    unit:             session.unit  || '',
+    scenario_slug:    'cardiac-stroke-sepsis-v5',
+    session_started:  session.start ? new Date(session.start).toISOString() : null,
+    nwi_pct:          nwi,
+    total_nodes:      total,
+    expert_count:     expert,
+    mid_count:        mid,
+    gap_count:        gap,
+    rapid_clicks:     session.rapidClickCount || 0,
+    backtracks:       session.backtrackCount  || 0,
+    self_corrections: (session.selfCorrected  || []).length,
+    total_revisions:  Object.keys(session.revisions || {}).length,
+    strong_revisions: strong,
+    partial_revisions:partial,
+    backslides:       backsl,
+    confirmed_gaps:   (session.confirmedGaps  || []).length,
+    aria_engagements: (session.ariaLog || []).length,
+    avg_decision_s:   avgLat,
+    avg_inter_s:      avgInt,
+    position_bias_a:  positionBiasA,
+
+    s1a:   fc['s1a']   || null, s1a2:  fc['s1a2']  || null,
+    s1b_1: fc['s1b_1'] || null, s1b_2: fc['s1b_2'] || null, s1c: fc['s1c'] || null,
+    s2a:   fc['s2a']   || null, s2a2:  fc['s2a2']  || null, s2b: fc['s2b'] || null, s2c: fc['s2c'] || null,
+    s3a:   fc['s3a']   || null, s3b:   fc['s3b']   || null, s3c: fc['s3c'] || null, s3c2: fc['s3c2']|| null,
+    rt1:   rfc['rt1']  || null,
+    retest_vs_s3a: retestVsS3a,
+
+    d1_ambiguity:     ds('D1'),  d2_communication: ds('D2'), d3_ethics:       ds('D3'),
+    d4_psych_safety:  ds('D4'),  d5_deterioration: ds('D5'), d6_pharmacology: ds('D6'),
+    d7_sbar:          ds('D7'),  d8_priority:      ds('D8'), d9_culture:      ds('D9'),
+    d11_social:       ds('D11'), d12_moral:        ds('D12'),
+
+    reflection: session.reflection || '',
+    raw_payload: {
+      firstChoices:         session.firstChoices         || null,
+      revisions:            session.revisions            || null,
+      selfCorrected:        session.selfCorrected        || null,
+      responseLatency:      session.responseLatency      || null,
+      hoverTimes:           session.hoverTimes           || null,
+      scrollDepths:         session.scrollDepths         || null,
+      confirmedGaps:        session.confirmedGaps        || null,
+      positionChoices:      session.positionChoices      || null,
+      retestFirstChoices:   session.retestFirstChoices   || null,
+      interChoiceIntervals: session.interChoiceIntervals || null,
+      postRevisionQuality:  session.postRevisionQuality  || null,
+      retestComparison:     session.retestComparison     || null,
+      ariaLog:              session.ariaLog              || null
+    }
   };
 
-  // Strip null/empty values before posting
-  Object.keys(fields).forEach(function(k) {
-    if (fields[k] === null || fields[k] === undefined || fields[k] === '') delete fields[k];
-  });
-
-  atPostRecord(fields)
-    .then(function(rec) {
-      console.log('AIWIZN Airtable: saved — ' + rec.id);
-      toast('Session synced to Airtable \u2713', 't-ok');
-    })
-    .catch(function(err) {
-      console.warn('AIWIZN Airtable error:', err);
-      toast('Saved locally. Airtable: ' + String(err).substring(0, 60), '');
+  supabaseClient
+    .from('prototype_sessions')
+    .insert(row)
+    .select('id')
+    .then(function(res) {
+      if (res.error) {
+        console.warn('AIWIZN Supabase error:', res.error);
+        toast('Saved locally. Supabase: ' + String(res.error.message || res.error).substring(0, 60), '');
+      } else {
+        var rec = (res.data && res.data[0]) || {};
+        console.log('AIWIZN Supabase: saved — ' + (rec.id || '(no id returned)'));
+        toast('Session synced to Supabase ✓', 't-ok');
+      }
     });
 }
 
-/* END AIRTABLE INTEGRATION */
+// Backwards-compat shim: anything that still calls sendToAirtable() now
+// routes to Supabase. The original Airtable token is removed.
+function sendToAirtable(session) { return sendToSupabase(session); }
 </script>
 
 <!-- ARIA Virtual Mentor -->
