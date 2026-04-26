@@ -4398,6 +4398,7 @@ computeNWI = function() {
 // Wrap renderPersona to inject narrative + v5 sections
 var _v4RenderPersona = renderPersona;
 renderPersona = function() {
+  window.v5State = v5State;
   _v4RenderPersona();
   // Update COGNITA stealth panel in persona
   setTimeout(v5RenderStealthPanel, 120);
