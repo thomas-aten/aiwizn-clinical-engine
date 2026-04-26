@@ -2974,6 +2974,7 @@ body { font-size: 15px; }
 
 
 
+
 /* SCRIPT_TAG_PRESENT */
 // Length-neutrality notice — prevents answer-length bias cue
 function injectLengthNotices() {
@@ -4399,6 +4400,18 @@ computeNWI = function() {
 var _v4RenderPersona = renderPersona;
 renderPersona = function() {
   window.v5State = v5State;
+  if (S.firstChoices && !Object.keys(v5State.firstChoices||{}).length) {
+    v5State.firstChoices = S.firstChoices;
+    v5State.revisions = S.revisions || {};
+    v5State.selfCorrected = S.selfCorrected || [];
+    v5State.rapidClickCount = S.rapidClickCount || 0;
+    v5State.backtrackCount = S.backtrackCount || 0;
+    v5State.ariaLog = S.ariaLog || [];
+    v5State.responseLatency = S.responseLatency || {};
+    v5State.positionChoices = S.positionChoices || {};
+    v5State.confirmedGaps = S.confirmedGaps || [];
+    v5State.retestFirstChoices = S.retestFirstChoices || {};
+  }
   _v4RenderPersona();
   // Update COGNITA stealth panel in persona
   setTimeout(v5RenderStealthPanel, 120);
@@ -4414,9 +4427,16 @@ function v5EnhancePersona() {
   if (!container) return;
 
   var _v5ep = (typeof v5State !== "undefined" && v5State) || window.v5State || {};
-  var fc = _v5ep.firstChoices || {};
+  var fc = (Object.keys(_v5ep.firstChoices||{}).length) ? _v5ep.firstChoices : (S.firstChoices || S.choices || {});
   var total = Object.keys(fc).length;
   if (!total) return;
+  if (!Object.keys(_v5ep.firstChoices||{}).length && S.firstChoices) {
+    _v5ep.firstChoices = S.firstChoices;
+    _v5ep.revisions = _v5ep.revisions || S.revisions || {};
+    _v5ep.selfCorrected = _v5ep.selfCorrected || S.selfCorrected || [];
+    _v5ep.rapidClickCount = _v5ep.rapidClickCount || S.rapidClickCount || 0;
+    _v5ep.retestFirstChoices = _v5ep.retestFirstChoices || S.retestFirstChoices || {};
+  }
 
   var nwi = computeNWI();
   var expert = Object.values(fc).filter(function(c){return c==='expert';}).length;
