@@ -5253,6 +5253,55 @@ function getCurrentVariant(nodeId) {
 (function(){var origStart=window.startSession;if(typeof origStart==='function'){window.startSession=function(){var r=origStart.apply(this,arguments);loadVariants();if(typeof S!=='undefined')S.variantSeed=S.id;saveCurr&&saveCurr();return r;};}})();
 
 // V6 APPLY VARIANT TO PANEL
+// NCLEX BADGE AUTO-RENDER ENGINE
+window.AIWIZN_NCLEX = null;
+function loadNclexMapping() {
+  if (window.AIWIZN_NCLEX) return Promise.resolve(window.AIWIZN_NCLEX);
+  return fetch('nclex_mapping.json').then(function(r){ return r.json(); }).then(function(j){ window.AIWIZN_NCLEX = j; return j; }).catch(function(e){ console.warn('nclex map load err:', e); return null; });
+}
+function buildNclexBadge(nodeId) {
+  if (!window.AIWIZN_NCLEX || !window.AIWIZN_NCLEX.nodes[nodeId]) return null;
+  var map = window.AIWIZN_NCLEX;
+  var node = map.nodes[nodeId];
+  var stepNames = node.steps.map(function(s){ return s + ': ' + map.ncjmm_steps[s]; }).join(' / ');
+  var needNames = node.needs.map(function(n){ return map.client_needs[n]; }).join(' + ');
+  var tooltip = 'NCJMM Steps: ' + stepNames + '. Client Needs: ' + needNames + '. ' + node.summary;
+  return '<span class="nclex-badge nclex-tooltip"><span class="nclex-badge-dot"></span>NCLEX-RN / NGN Aligned<span class="nclex-tt-content">' + tooltip + '</span></span>';
+}
+function renderNclexBadgeFor(nodeId) {
+  if (!window.AIWIZN_NCLEX) { setTimeout(function(){ renderNclexBadgeFor(nodeId); }, 200); return; }
+  var panel = document.getElementById('panel-' + nodeId);
+  if (!panel) return;
+  // Remove any existing badge in this panel
+  var existing = panel.querySelector('.nclex-badge');
+  if (existing) existing.parentNode.removeChild(existing);
+  var badgeHTML = buildNclexBadge(nodeId);
+  if (!badgeHTML) return;
+  // Find a sensible insertion point: env-badges, scene header, or top of panel
+  var target = panel.querySelector('.env-badges') || panel.querySelector('.scene-header') || panel.querySelector('.scene-card') || panel;
+  // Wrap in an inline container if needed
+  var wrap = document.createElement('span');
+  wrap.innerHTML = badgeHTML;
+  target.appendChild(wrap.firstChild);
+}
+// Wire into go() so badge renders on every scenario panel
+(function(){
+  var origGo2 = window.go;
+  if (typeof origGo2 === 'function') {
+    window.go = function(panelId) {
+      var r = origGo2.apply(this, arguments);
+      try {
+        if (panelId && /^s\d/.test(panelId) && window.AIWIZN_NCLEX && window.AIWIZN_NCLEX.nodes[panelId]) {
+          setTimeout(function(){ renderNclexBadgeFor(panelId); }, 80);
+        }
+      } catch(e) { console.warn('nclex badge err:', e); }
+      return r;
+    };
+  }
+})();
+loadNclexMapping();
+
+
 function applyVariant(nodeId) {
   if (!window.AIWIZN_VARIANTS) { setTimeout(function(){ applyVariant(nodeId); }, 200); return; }
   var v = getCurrentVariant(nodeId);

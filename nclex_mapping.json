@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "NCLEX-RN / NGN coverage map for AIWIZN scenarios. Each node maps to NCSBN Clinical Judgment Measurement Model (NCJMM) cognitive steps and NCLEX-RN Client Needs categories. Used by in-app badges and the formal Verification Report.",
+    "sources": ["NCSBN 2023 NCLEX-RN Test Plan", "NCSBN Clinical Judgment Measurement Model", "AHA/ACC STEMI Guidelines", "Surviving Sepsis Campaign 2021"],
+    "copyright": "AIWIZN/ATEN Inc 2026 - Private & Confidential"
+  },
+  "ncjmm_steps": {
+    "1": "Recognize Cues",
+    "2": "Analyze Cues",
+    "3": "Prioritize Hypotheses",
+    "4": "Generate Solutions",
+    "5": "Take Action",
+    "6": "Evaluate Outcomes"
+  },
+  "client_needs": {
+    "MOC": "Management of Care",
+    "SIC": "Safety and Infection Control",
+    "HPM": "Health Promotion and Maintenance",
+    "PSI": "Psychosocial Integrity",
+    "BCC": "Basic Care and Comfort",
+    "PPT": "Pharmacological and Parenteral Therapies",
+    "RRP": "Reduction of Risk Potential",
+    "PA": "Physiological Adaptation"
+  },
+  "nodes": {
+    "s1a":  {"steps": [1,2,4,5], "needs": ["PPT","PA"],     "summary": "STEMI recognition and pharmacology decisions under hypotension."},
+    "s1a2": {"steps": [5,6],     "needs": ["PPT","PA"],     "summary": "Pharmacologic consequence: stop-the-cause vs treat-the-symptom."},
+    "s1b1": {"steps": [3,5],     "needs": ["MOC","PSI"],    "summary": "Prioritisation under family pressure during STEMI workflow."},
+    "s1b2": {"steps": [5],       "needs": ["MOC","PA"],     "summary": "SBAR communication clarity to interventional cardiology team."},
+    "s1c":  {"steps": [3,4,5],   "needs": ["MOC","PSI"],    "summary": "Ethical reasoning and respect for refusal of recommended care."},
+    "s2a":  {"steps": [1,2],     "needs": ["RRP","PA"],     "summary": "Stroke onset time validation and tPA window assessment."},
+    "s2a2": {"steps": [3,4,5],   "needs": ["PPT","RRP"],    "summary": "tPA risk-benefit decision under timeline uncertainty."},
+    "s2b":  {"steps": [5],       "needs": ["PSI","HPM"],    "summary": "Therapeutic communication during stroke fear and family distress."},
+    "s2c":  {"steps": [1,2,5],   "needs": ["HPM","PSI"],    "summary": "Discharge planning with social complexity and language access."},
+    "s3a":  {"steps": [1,3,5],   "needs": ["PA","PPT"],     "summary": "Sepsis recognition and bundle initiation under uncertainty."},
+    "s3b":  {"steps": [4,5],     "needs": ["MOC","SIC"],    "summary": "Speaking up against a senior physician on patient safety grounds."},
+    "s3c":  {"steps": [2,6],     "needs": ["RRP","PA"],     "summary": "Lactate trend interpretation and post-resuscitation reassessment."},
+    "s3c2": {"steps": [3,5,6],   "needs": ["MOC","PA"],     "summary": "ICU escalation despite team friction; trust the data."}
+  }
+}
