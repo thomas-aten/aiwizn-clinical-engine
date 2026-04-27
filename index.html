@@ -1284,7 +1284,7 @@ body { font-size: 15px; }
       <div class="env-label" id="s1a-env-label">Scenario 1-A · Cardiac Emergency Unit · 0847</div>
       <div class="env-title" id="s1a-env-title">Mr. David Osei, 58M — "It's just indigestion"</div>
       <div class="env-meta" id="s1a-env-meta">15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.</div>
-      <div class="env-badges"><span class="env-badge critical">STEMI Active</span><span class="nclex-badge nclex-tooltip"><span class="nclex-badge-dot"></span>NCLEX-RN / NGN Aligned<span class="nclex-tt-content">This scenario maps to NCJMM steps 1, 2, 4, 5 (Recognize / Analyze cues, Generate solutions, Take action) and NCLEX-RN Client Needs: Pharmacological Therapies + Physiological Adaptation.</span></span><span class="env-badge warn">D-05 Primary</span><span class="env-badge">D-08 Prioritisation</span><span class="env-badge">ECG Interpretation</span></div>
+      <div class="env-badges"><span class="env-badge critical">STEMI Active</span><span class="env-badge warn">D-05 Primary</span><span class="env-badge">D-08 Prioritisation</span><span class="env-badge">ECG Interpretation</span></div>
     </div>
     <div class="env-timer" id="timer-s1a">⏱ 00:00 — Clinical Clock Running</div>
   </div>
@@ -5251,6 +5251,71 @@ function getCurrentVariant(nodeId) {
 }
 // Initialise on first session start
 (function(){var origStart=window.startSession;if(typeof origStart==='function'){window.startSession=function(){var r=origStart.apply(this,arguments);loadVariants();if(typeof S!=='undefined')S.variantSeed=S.id;saveCurr&&saveCurr();return r;};}})();
+
+// NCLEX BADGE AUTO RENDER ENGINE
+window.NCLEX_MAP = null;
+function loadNclexMap() {
+  if (window.NCLEX_MAP) return Promise.resolve(window.NCLEX_MAP);
+  return fetch('nclex_mapping.json').then(function(r){return r.json();}).then(function(j){window.NCLEX_MAP=j;return j;}).catch(function(e){console.warn('nclex map fail:',e);return null;});
+}
+function buildNclexBadgeHTML(nodeId) {
+  if (!window.NCLEX_MAP || !window.NCLEX_MAP.nodes[nodeId]) return '';
+  var m = window.NCLEX_MAP.nodes[nodeId];
+  var stepNames = window.NCLEX_MAP.njcmm_steps;
+  var stepLabels = m.steps.map(function(s){return s + ' (' + stepNames[s] + ')';}).join(', ');
+  var cnList = m.client_needs.join(' + ');
+  var tt = 'NCJMM Steps ' + stepLabels + '. NCLEX-RN Client Needs: ' + cnList + '. ' + m.summary + '.';
+  return '<span class="nclex-badge nclex-tooltip" data-node="' + nodeId + '"><span class="nclex-badge-dot"></span>NCLEX-RN / NGN Aligned<span class="nclex-tt-content">' + tt + '</span></span>';
+}
+function renderNclexBadgeFor(nodeId) {
+  if (!window.NCLEX_MAP) return;
+  var panel = document.getElementById('panel-' + nodeId);
+  if (!panel) return;
+  // Remove any existing badge for this node
+  panel.querySelectorAll('.nclex-badge[data-node="' + nodeId + '"]').forEach(function(b){b.remove();});
+  // Find the env-badges container, or fall back to env-label
+  var envBadges = panel.querySelector('.env-badges');
+  var anchor = envBadges || panel.querySelector('.env-label') || panel.querySelector('.env-title');
+  if (!anchor) return;
+  var wrap = document.createElement('span');
+  wrap.innerHTML = buildNclexBadgeHTML(nodeId);
+  if (envBadges) {
+    envBadges.appendChild(wrap.firstChild);
+  } else {
+    anchor.parentNode.insertBefore(wrap.firstChild, anchor.nextSibling);
+  }
+}
+function renderAllNclexBadges() {
+  if (!window.NCLEX_MAP) return;
+  Object.keys(window.NCLEX_MAP.nodes).forEach(function(nodeId){
+    renderNclexBadgeFor(nodeId);
+  });
+}
+// Auto-load and render on session start
+(function(){
+  var origStart = window.startSession;
+  if (typeof origStart === 'function') {
+    window.startSession = function(){
+      var r = origStart.apply(this, arguments);
+      loadNclexMap().then(function(){ renderAllNclexBadges(); });
+      return r;
+    };
+  }
+})();
+// Also re-render when go() navigates (in case panels render lazily)
+(function(){
+  var origGo = window.go;
+  if (typeof origGo === 'function') {
+    window.go = function(panelId){
+      var r = origGo.apply(this, arguments);
+      if (panelId && /^s\d/.test(panelId) && window.NCLEX_MAP) {
+        setTimeout(function(){ renderNclexBadgeFor(panelId); }, 60);
+      }
+      return r;
+    };
+  }
+})();
+
 
 // V6 APPLY VARIANT TO PANEL
 // NCLEX BADGE AUTO-RENDER ENGINE

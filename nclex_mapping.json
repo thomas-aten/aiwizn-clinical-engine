@@ -1,11 +1,11 @@
 {
   "_meta": {
     "version": "1.0.0",
-    "description": "NCLEX-RN / NGN coverage map for AIWIZN scenarios. Each node maps to NCSBN Clinical Judgment Measurement Model (NCJMM) cognitive steps and NCLEX-RN Client Needs categories. Used by in-app badges and the formal Verification Report.",
-    "sources": ["NCSBN 2023 NCLEX-RN Test Plan", "NCSBN Clinical Judgment Measurement Model", "AHA/ACC STEMI Guidelines", "Surviving Sepsis Campaign 2021"],
+    "description": "AIWIZN node to NCLEX-RN/NGN mapping. Source of truth for in-app NCLEX coverage badges and the formal verification report.",
+    "source": "AIWIZN NCLEX Verification Report v6.1 (April 2026)",
     "copyright": "AIWIZN/ATEN Inc 2026 - Private & Confidential"
   },
-  "ncjmm_steps": {
+  "njcmm_steps": {
     "1": "Recognize Cues",
     "2": "Analyze Cues",
     "3": "Prioritize Hypotheses",
@@ -13,29 +13,19 @@
     "5": "Take Action",
     "6": "Evaluate Outcomes"
   },
-  "client_needs": {
-    "MOC": "Management of Care",
-    "SIC": "Safety and Infection Control",
-    "HPM": "Health Promotion and Maintenance",
-    "PSI": "Psychosocial Integrity",
-    "BCC": "Basic Care and Comfort",
-    "PPT": "Pharmacological and Parenteral Therapies",
-    "RRP": "Reduction of Risk Potential",
-    "PA": "Physiological Adaptation"
-  },
   "nodes": {
-    "s1a":  {"steps": [1,2,4,5], "needs": ["PPT","PA"],     "summary": "STEMI recognition and pharmacology decisions under hypotension."},
-    "s1a2": {"steps": [5,6],     "needs": ["PPT","PA"],     "summary": "Pharmacologic consequence: stop-the-cause vs treat-the-symptom."},
-    "s1b1": {"steps": [3,5],     "needs": ["MOC","PSI"],    "summary": "Prioritisation under family pressure during STEMI workflow."},
-    "s1b2": {"steps": [5],       "needs": ["MOC","PA"],     "summary": "SBAR communication clarity to interventional cardiology team."},
-    "s1c":  {"steps": [3,4,5],   "needs": ["MOC","PSI"],    "summary": "Ethical reasoning and respect for refusal of recommended care."},
-    "s2a":  {"steps": [1,2],     "needs": ["RRP","PA"],     "summary": "Stroke onset time validation and tPA window assessment."},
-    "s2a2": {"steps": [3,4,5],   "needs": ["PPT","RRP"],    "summary": "tPA risk-benefit decision under timeline uncertainty."},
-    "s2b":  {"steps": [5],       "needs": ["PSI","HPM"],    "summary": "Therapeutic communication during stroke fear and family distress."},
-    "s2c":  {"steps": [1,2,5],   "needs": ["HPM","PSI"],    "summary": "Discharge planning with social complexity and language access."},
-    "s3a":  {"steps": [1,3,5],   "needs": ["PA","PPT"],     "summary": "Sepsis recognition and bundle initiation under uncertainty."},
-    "s3b":  {"steps": [4,5],     "needs": ["MOC","SIC"],    "summary": "Speaking up against a senior physician on patient safety grounds."},
-    "s3c":  {"steps": [2,6],     "needs": ["RRP","PA"],     "summary": "Lactate trend interpretation and post-resuscitation reassessment."},
-    "s3c2": {"steps": [3,5,6],   "needs": ["MOC","PA"],     "summary": "ICU escalation despite team friction; trust the data."}
+    "s1a":   {"steps": [1,2,4,5], "client_needs": ["Pharmacological Therapies", "Physiological Adaptation"], "summary": "STEMI recognition + drug choice with ECG and BP cues"},
+    "s1a2":  {"steps": [5,6],     "client_needs": ["Pharmacological Therapies", "Physiological Adaptation"], "summary": "Pharmacologic consequence: stop the cause, evaluate outcome"},
+    "s1b1":  {"steps": [3,5],     "client_needs": ["Management of Care", "Psychosocial Integrity"], "summary": "Prioritise under family pressure during STEMI"},
+    "s1b2":  {"steps": [5],       "client_needs": ["Management of Care", "Reduction of Risk Potential"], "summary": "SBAR handover to interventional cardiology"},
+    "s1c":   {"steps": [3,4,5],   "client_needs": ["Management of Care", "Psychosocial Integrity"], "summary": "Ethical reasoning when patient refuses recommended care"},
+    "s2a":   {"steps": [1,2],     "client_needs": ["Reduction of Risk Potential", "Physiological Adaptation"], "summary": "Stroke onset time validation under uncertainty"},
+    "s2a2":  {"steps": [3,4,5],   "client_needs": ["Pharmacological Therapies", "Reduction of Risk Potential"], "summary": "tPA risk-benefit decision under timeline uncertainty"},
+    "s2b":   {"steps": [5],       "client_needs": ["Psychosocial Integrity"], "summary": "Therapeutic communication under acute stroke fear"},
+    "s2c":   {"steps": [1,2,5],   "client_needs": ["Health Promotion and Maintenance", "Psychosocial Integrity"], "summary": "Discharge planning under social complexity"},
+    "s3a":   {"steps": [1,3,5],   "client_needs": ["Pharmacological Therapies", "Physiological Adaptation"], "summary": "Sepsis bundle initiation under uncertainty"},
+    "s3b":   {"steps": [4,5],     "client_needs": ["Management of Care", "Safety and Infection Control"], "summary": "Speak up against senior physician with respect"},
+    "s3c":   {"steps": [2,6],     "client_needs": ["Reduction of Risk Potential", "Physiological Adaptation"], "summary": "Rising lactate trend interpretation"},
+    "s3c2":  {"steps": [3,5,6],   "client_needs": ["Management of Care", "Physiological Adaptation"], "summary": "ICU escalation despite team friction"}
   }
 }
