@@ -1120,6 +1120,16 @@ body { font-size: 15px; }
 .aria-fb-btn.dn.selected{background:rgba(220,38,38,.08);border-color:#DC2626;color:#DC2626}
 .aria-fb-thanks{color:#00A87A;font-weight:600}
 
+
+/* NCLEX coverage badge */
+.nclex-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:linear-gradient(135deg,#0D2D47 0%,#1A4A70 100%);color:#fff;border-radius:6px;font-family:JetBrains Mono,monospace;font-size:9.5px;letter-spacing:.12em;font-weight:700;text-transform:uppercase;margin:8px 4px 0;cursor:help;transition:all .15s}
+.nclex-badge:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(13,45,71,.25)}
+.nclex-badge-dot{width:6px;height:6px;border-radius:50%;background:#00C896;box-shadow:0 0 0 2px rgba(0,200,150,.3);flex-shrink:0}
+.nclex-tooltip{position:relative}
+.nclex-tooltip .nclex-tt-content{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0D2D47;color:#fff;padding:10px 14px;border-radius:8px;font-family:Inter,sans-serif;font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;line-height:1.5;width:280px;opacity:0;pointer-events:none;transition:opacity .15s;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:100}
+.nclex-tooltip:hover .nclex-tt-content{opacity:1}
+.nclex-tt-content::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#0D2D47}
+
 </style>
 </head>
 <body>
@@ -1274,7 +1284,7 @@ body { font-size: 15px; }
       <div class="env-label" id="s1a-env-label">Scenario 1-A · Cardiac Emergency Unit · 0847</div>
       <div class="env-title" id="s1a-env-title">Mr. David Osei, 58M — "It's just indigestion"</div>
       <div class="env-meta" id="s1a-env-meta">15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.</div>
-      <div class="env-badges"><span class="env-badge critical">STEMI Active</span><span class="env-badge warn">D-05 Primary</span><span class="env-badge">D-08 Prioritisation</span><span class="env-badge">ECG Interpretation</span></div>
+      <div class="env-badges"><span class="env-badge critical">STEMI Active</span><span class="nclex-badge nclex-tooltip"><span class="nclex-badge-dot"></span>NCLEX-RN / NGN Aligned<span class="nclex-tt-content">This scenario maps to NCJMM steps 1, 2, 4, 5 (Recognize / Analyze cues, Generate solutions, Take action) and NCLEX-RN Client Needs: Pharmacological Therapies + Physiological Adaptation.</span></span><span class="env-badge warn">D-05 Primary</span><span class="env-badge">D-08 Prioritisation</span><span class="env-badge">ECG Interpretation</span></div>
     </div>
     <div class="env-timer" id="timer-s1a">⏱ 00:00 — Clinical Clock Running</div>
   </div>
@@ -3776,52 +3786,52 @@ const ARIA_S = {
   ]}
 ,
   s1a2_gap: { d:1800, m:[
-    \`The consequence is unfolding. Your patient is now hypotensive. Pause - what is the priority right now? Stop the offending agent first, or chase the symptoms?\`
+    `The consequence is unfolding. Your patient is now hypotensive. Pause - what is the priority right now? Stop the offending agent first, or chase the symptoms?`
   ], o:[
-    {t:\`Stop nitroglycerin and reassess BP\`, w:\`Yes - root cause first. The drip stays off until BP recovers, then we revisit pain control with morphine and a smaller dose only if pressure tolerates.\`},
-    {t:\`Push fluids while continuing nitro\`, w:\`Fluids without stopping the cause is treating the smoke and ignoring the fire. The pharmacology is the cause - it must come off first.\`},
-    {t:\`Just observe and recheck in 5 minutes\`, w:\`Hypotension at 82/45 with pharmacologic cause is not a watching problem. Action is required now - stop the agent, then reassess.\`}
+    {t:`Stop nitroglycerin and reassess BP`, w:`Yes - root cause first. The drip stays off until BP recovers, then we revisit pain control with morphine and a smaller dose only if pressure tolerates.`},
+    {t:`Push fluids while continuing nitro`, w:`Fluids without stopping the cause is treating the smoke and ignoring the fire. The pharmacology is the cause - it must come off first.`},
+    {t:`Just observe and recheck in 5 minutes`, w:`Hypotension at 82/45 with pharmacologic cause is not a watching problem. Action is required now - stop the agent, then reassess.`}
   ]},
   s1a2_expert: { d:2200, m:[
-    \`You stopped the nitroglycerin and called for fluids. Notice what just happened - you recognised that the medication caused the drop and acted on the cause, not the symptom. That is expert-level pharmacology reasoning.\`
+    `You stopped the nitroglycerin and called for fluids. Notice what just happened - you recognised that the medication caused the drop and acted on the cause, not the symptom. That is expert-level pharmacology reasoning.`
   ], o:[]},
   s1a2_mid: { d:1800, m:[
-    \`You took a measured action. There is more to this picture - what would you tell your charge nurse in the SBAR right now about why this happened?\`
+    `You took a measured action. There is more to this picture - what would you tell your charge nurse in the SBAR right now about why this happened?`
   ], o:[
-    {t:\`Patient hypotensive after nitro - drip stopped\`, w:\`That is the right SBAR core. Add the BP trend and the pain score and you have a complete handover.\`},
-    {t:\`Just say BP dropped, holding off meds\`, w:\`Too thin. The receiver needs the cause-effect link to anticipate what comes next.\`}
+    {t:`Patient hypotensive after nitro - drip stopped`, w:`That is the right SBAR core. Add the BP trend and the pain score and you have a complete handover.`},
+    {t:`Just say BP dropped, holding off meds`, w:`Too thin. The receiver needs the cause-effect link to anticipate what comes next.`}
   ]},
   s2a2_gap: { d:1800, m:[
-    \`The tPA window is closing. Family says last known well was 3 hours ago - but the wife is uncertain. Do you push for tPA based on the optimistic timeline, or hold for further imaging and confirmation?\`
+    `The tPA window is closing. Family says last known well was 3 hours ago - but the wife is uncertain. Do you push for tPA based on the optimistic timeline, or hold for further imaging and confirmation?`
   ], o:[
-    {t:\`Hold tPA, get repeat imaging and confirm timing\`, w:\`Right call. tPA outside the window or with uncertain timing causes more harm than benefit. Confirm before you commit.\`},
-    {t:\`Push tPA - the window may close\`, w:\`Speed without certainty is dangerous here. The 4.5-hour window is hard - guessing the timing risks intracranial haemorrhage.\`},
-    {t:\`Defer to neurology without further input\`, w:\`Deferring is not a decision. Your clinical judgement on timing matters - the team needs your assessment of the family timeline.\`}
+    {t:`Hold tPA, get repeat imaging and confirm timing`, w:`Right call. tPA outside the window or with uncertain timing causes more harm than benefit. Confirm before you commit.`},
+    {t:`Push tPA - the window may close`, w:`Speed without certainty is dangerous here. The 4.5-hour window is hard - guessing the timing risks intracranial haemorrhage.`},
+    {t:`Defer to neurology without further input`, w:`Deferring is not a decision. Your clinical judgement on timing matters - the team needs your assessment of the family timeline.`}
   ]},
   s2a2_expert: { d:2200, m:[
-    \`You held tPA pending confirmation. That patience under pressure is exactly the discipline this scenario tests - you protected the patient from a wrong-window administration.\`
+    `You held tPA pending confirmation. That patience under pressure is exactly the discipline this scenario tests - you protected the patient from a wrong-window administration.`
   ], o:[]},
   s2a2_mid: { d:1800, m:[
-    \`You took a balanced position. What would tip you toward tPA versus toward holding - what is the threshold of certainty you would need on the timing?\`
+    `You took a balanced position. What would tip you toward tPA versus toward holding - what is the threshold of certainty you would need on the timing?`
   ], o:[
-    {t:\`Multiple corroborating witnesses on time\`, w:\`Yes - timing certainty drives the decision. Single uncertain witness is not enough.\`},
-    {t:\`Just clinical gestalt\`, w:\`Gestalt is necessary but not sufficient. tPA needs documented timing.\`}
+    {t:`Multiple corroborating witnesses on time`, w:`Yes - timing certainty drives the decision. Single uncertain witness is not enough.`},
+    {t:`Just clinical gestalt`, w:`Gestalt is necessary but not sufficient. tPA needs documented timing.`}
   ]},
   s3c2_gap: { d:1800, m:[
-    \`Sepsis bundle is at hour 3. Lactate is rising despite fluids. Your colleague suggests waiting another hour before escalating. What is your move?\`
+    `Sepsis bundle is at hour 3. Lactate is rising despite fluids. Your colleague suggests waiting another hour before escalating. What is your move?`
   ], o:[
-    {t:\`Escalate to ICU now - rising lactate is a red flag\`, w:\`Right. Rising lactate post-resuscitation is organ-failure progression - this is an ICU patient now, not a watching patient.\`},
-    {t:\`Wait the hour as colleague suggested\`, w:\`Deference to a colleague over the data is a known failure mode. The lactate is the data - it overrides comfort.\`},
-    {t:\`Add another fluid bolus and recheck\`, w:\`More fluids without source control on a rising-lactate sepsis is a partial answer. Escalation goes alongside, not instead.\`}
+    {t:`Escalate to ICU now - rising lactate is a red flag`, w:`Right. Rising lactate post-resuscitation is organ-failure progression - this is an ICU patient now, not a watching patient.`},
+    {t:`Wait the hour as colleague suggested`, w:`Deference to a colleague over the data is a known failure mode. The lactate is the data - it overrides comfort.`},
+    {t:`Add another fluid bolus and recheck`, w:`More fluids without source control on a rising-lactate sepsis is a partial answer. Escalation goes alongside, not instead.`}
   ]},
   s3c2_expert: { d:2200, m:[
-    \`You escalated despite team friction. That kind of independent clinical judgement under social pressure is what protects patients in real units.\`
+    `You escalated despite team friction. That kind of independent clinical judgement under social pressure is what protects patients in real units.`
   ], o:[]},
   s3c2_mid: { d:1800, m:[
-    \`You moved partially. The lactate trend is the most important signal here - what does a rising lactate after fluid resuscitation actually tell you?\`
+    `You moved partially. The lactate trend is the most important signal here - what does a rising lactate after fluid resuscitation actually tell you?`
   ], o:[
-    {t:\`Tissue hypoperfusion despite volume - source control needed\`, w:\`Exactly. Fluid alone has not reached the source. The patient needs source control plus pressors.\`},
-    {t:\`Just dehydration\`, w:\`Lactate after adequate fluid resuscitation is not dehydration - it is organ-level oxygen debt. Different problem, different treatment.\`}
+    {t:`Tissue hypoperfusion despite volume - source control needed`, w:`Exactly. Fluid alone has not reached the source. The patient needs source control plus pressors.`},
+    {t:`Just dehydration`, w:`Lactate after adequate fluid resuscitation is not dehydration - it is organ-level oxygen debt. Different problem, different treatment.`}
   ]}};
 
 // ── ARIA STATE ───────────────────────────────────────────────
