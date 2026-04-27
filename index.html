@@ -3920,6 +3920,10 @@ var _origGoForAria = go;
 go = function(name) {
   _origGoForAria(name);
   if (name === 'persona') {
+    if (S.ariaEndFired || window._ariaEndFiredSession) return;
+    window._ariaEndFiredSession = true;
+    S.ariaEndFired = true;
+    try { saveCurr(); } catch(_) {}
     setTimeout(function() {
       var scr = ARIA_S['end'];
       if (!scr) return;
@@ -4677,17 +4681,17 @@ renderDash = function() {
     var ancPctTotal = posKs.length ? Math.round((posKs.filter(function(k){return posC[k]==='A';}).length/posKs.length)*100) : 0;
 
     function _cell(lbl, val, color, sub) {
-      return '<div style="padding:14px 16px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.06)">'+
-             '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#6B7A8D;letter-spacing:.14em;font-weight:700;margin-bottom:8px">'+lbl+'</div>'+
+      return '<div style="padding:14px 16px;background:linear-gradient(180deg,#FAFBFD 0%,#F4F6FA 100%);border-radius:10px;border:1px solid #EEF1F5">'+
+             '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#5A6779;letter-spacing:.14em;font-weight:700;margin-bottom:8px">'+lbl+'</div>'+
              '<div style="font-size:30px;font-weight:700;color:'+color+';font-family:JetBrains Mono,monospace;line-height:1">'+val+'</div>'+
-             '<div style="font-size:10px;color:#4A5568;margin-top:6px;font-family:JetBrains Mono,monospace">'+sub+'</div>'+
+             '<div style="font-size:10px;color:#8896AA;margin-top:6px;font-family:JetBrains Mono,monospace">'+sub+'</div>'+
              '</div>';
     }
 
     var p1 = document.createElement('div');
     p1.id = 'cognita-stealth-panel';
-    p1.style.cssText = 'background:#0D1F2D;border-radius:14px;padding:22px 24px;margin-top:20px;border:1px solid rgba(0,200,150,.15);box-shadow:0 4px 20px rgba(0,0,0,.08)';
-    p1.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#00C896;margin-bottom:18px;text-transform:uppercase">COGNITA - STEALTH PSYCHOMETRIC INDICATORS</div>'+
+    p1.style.cssText = 'background:#FFFFFF;border-radius:14px;padding:22px 24px;margin-top:20px;border:1px solid #E6EAF0;box-shadow:0 1px 4px rgba(15,30,55,.04),0 4px 16px rgba(15,30,55,.04)';
+    p1.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#00936A;margin-bottom:20px;text-transform:uppercase">COGNITA - STEALTH PSYCHOMETRIC INDICATORS</div>'+
       '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+
         _cell('AVG DECISION', avgSec!=null?avgSec+'s':'-', avgSec!=null?(avgSec>=15?'#00C896':avgSec>=8?'#D97706':'#DC2626'):'#B0B8C4', 'benchmark: 15s+')+
         _cell('RAPID CLICKS', rapidC>0?Math.round(rapidC/Object.keys(fc).length*100)+'%':'0%', rapidC>=4?'#DC2626':rapidC>0?'#D97706':'#00C896', rapidC+' under 4s')+
@@ -4721,8 +4725,8 @@ renderDash = function() {
 
     var p2 = document.createElement('div');
     p2.id = 'cognita-v2-panel';
-    p2.style.cssText = 'background:#0D1F2D;border-radius:14px;padding:22px 24px;margin-top:14px;border:1px solid rgba(96,165,250,.15);box-shadow:0 4px 20px rgba(0,0,0,.08)';
-    p2.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#60A5FA;margin-bottom:18px;text-transform:uppercase">COGNITA - LEARNING QUALITY INDICATORS <span style="color:rgba(255,255,255,.35);font-weight:400">(SCORED ON ORIGINAL CHOICES)</span></div>'+
+    p2.style.cssText = 'background:#FFFFFF;border-radius:14px;padding:22px 24px;margin-top:14px;border:1px solid #E6EAF0;box-shadow:0 1px 4px rgba(15,30,55,.04),0 4px 16px rgba(15,30,55,.04)';
+    p2.innerHTML = '<div style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#2563EB;margin-bottom:20px;text-transform:uppercase">COGNITA - LEARNING QUALITY INDICATORS <span style="color:#A4ADBC;font-weight:400">(SCORED ON ORIGINAL CHOICES)</span></div>'+
       '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+
         _cell('GAP NODE LAT.', avgGap?avgGap+'s':'-', avgGap&&avgGap>15?'#00C896':avgGap&&avgGap>8?'#D97706':'#DC2626', 'avg time on gaps')+
         _cell('EXPERT NODE LAT.', avgExp?avgExp+'s':'-', avgExp&&avgExp<10?'#00C896':'#D97706', 'avg time on expert')+
@@ -4730,14 +4734,14 @@ renderDash = function() {
         _cell('STRONG REVISIONS', revC, '#00C896', 'gap/mid to expert')+
         _cell('PARTIAL REVISIONS', 0, '#6B7A8D', 'gap to mid')+
         _cell('BACKSLIDES', 0, '#00C896', 'expert to worse')+
-        '<div style="padding:14px 16px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid rgba(255,255,255,.06)">'+
-          '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#6B7A8D;letter-spacing:.14em;font-weight:700;margin-bottom:8px">RT-01 VS S3A</div>'+
+        '<div style="padding:14px 16px;background:linear-gradient(180deg,#FAFBFD 0%,#F4F6FA 100%);border-radius:10px;border:1px solid #EEF1F5">'+
+          '<div style="font-family:JetBrains Mono,monospace;font-size:9.5px;color:#5A6779;letter-spacing:.14em;font-weight:700;margin-bottom:8px">RT-01 VS S3A</div>'+
           '<div style="font-size:22px;font-weight:700;color:'+rtCol+';font-family:JetBrains Mono,monospace;line-height:1">'+rtLabel+'</div>'+
-          '<div style="font-size:10px;color:#4A5568;margin-top:6px;font-family:JetBrains Mono,monospace">'+(rtVal==='gap'?'regressed':rtVal==='expert'?'improved':'maintained')+'</div>'+
+          '<div style="font-size:10px;color:#8896AA;margin-top:6px;font-family:JetBrains Mono,monospace">'+(rtVal==='gap'?'regressed':rtVal==='expert'?'improved':'maintained')+'</div>'+
         '</div>'+
         _cell('CONFIRMED GAPS', gapsC, gapsC>2?'#DC2626':'#D97706', 'saw feedback, kept gap')+
       '</div>'+
-      '<div style="margin-top:16px;padding:14px 16px;background:rgba(0,0,0,.25);border-radius:8px;border:1px solid rgba(255,255,255,.05);font-family:JetBrains Mono,monospace;font-size:11.5px;color:rgba(255,255,255,.7);line-height:1.7">'+insight+'</div>';
+      '<div style="margin-top:16px;padding:14px 16px;background:linear-gradient(180deg,#F8FAFC 0%,#F0F4F9 100%);border-radius:10px;border:1px solid #E6EAF0;font-family:JetBrains Mono,monospace;font-size:12px;color:#3E4A5C;line-height:1.7">'+insight+'</div>';
     dp.appendChild(p2);
 
   } catch(e) { console.error('dashboard cognita error:', e); }
