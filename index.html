@@ -2890,6 +2890,7 @@ body { font-size: 15px; }
     <div class="lumina-hdr">CONTINUUM · Lifecycle Progress</div>
     <div class="ct-wrap">
       <div class="ct-label">Assessment Pathway</div>
+      <div style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--txt3);text-align:center;margin-bottom:14px;letter-spacing:.04em">Your journey: locked - active - complete. Each stage unlocks the next.</div>
       <div class="ct-stages" id="ct-stages">
         <div class="ct-stage">
           <div class="ct-dot ct-locked" id="ct-dot-0">S1</div>
@@ -3512,12 +3513,12 @@ function renderDash() {
   if (specEl) {
     const spec  = computeSpec(currD);
     const specS = Object.entries(spec).sort((a,b) => b[1]-a[1]);
-    const specColors = {'Cardiac ICU':'var(--crimson)','Neuro/Stroke':'var(--amber)','Medical ICU':'var(--cyan)','Med-Surg':'var(--teal)','ER/Trauma':'var(--orange)'};
+    const specColors = function(pct){return pct>=75?'var(--teal)':pct>=65?'#10B981':pct>=55?'var(--amber)':pct>=45?'var(--orange)':'var(--crimson)';};
     if (!hasD) {
       specEl.innerHTML = '<div style="color:var(--txt3);font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;padding:20px 0">No data yet</div>';
     } else {
       specEl.innerHTML = specS.map(([n,v]) => {
-        const col = specColors[n] || 'var(--teal)';
+        const col = specColors(v);
         return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><div style="font-size:11px;font-weight:600;color:var(--txt2);width:105px;flex-shrink:0">${n}</div><div style="flex:1;height:10px;background:var(--border);border-radius:5px;overflow:hidden"><div style="height:100%;border-radius:5px;width:${v}%;background:${col}"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:${col};width:38px;text-align:right">${v}%</div></div>`;
       }).join('');
     }
@@ -5131,8 +5132,8 @@ function _stealthCell(label, val, col, sub) {
 /* ── CONTINUUM PROGRESS TRACK JS ─────────────────────── */
 function v5RenderContinuumTrack() {
   var fc = v5State.firstChoices || {};
-  var s1done = ['s1a','s1b_1','s1b_2','s1c'].some(function(k){return !!fc[k];});
-  var s1full = ['s1a','s1b_1','s1b_2','s1c'].every(function(k){return !!fc[k];});
+  var s1done = ['s1a','s1a2','s1b1','s1b2','s1c'].some(function(k){return !!fc[k];});
+  var s1full = ['s1a','s1a2','s1b1','s1b2','s1c'].every(function(k){return !!fc[k];});
   var s2full = ['s2a','s2a2','s2b','s2c'].every(function(k){return !!fc[k];});
   var s3full = ['s3a','s3b','s3c','s3c2'].every(function(k){return !!fc[k];});
   var rtDone = !!(v5State.retestFirstChoices && (v5State.retestFirstChoices['rt1']));
