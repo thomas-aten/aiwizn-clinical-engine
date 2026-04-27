@@ -1255,9 +1255,9 @@ body { font-size: 15px; }
       <defs><clipPath id="ecgClip1"><rect x="20" y="45" width="160" height="110"/></clipPath></defs>
       <text x="100" y="170" text-anchor="middle" fill="#007A50" font-family="monospace" font-size="9" opacity=".9">CARDIAC MONITOR</text>
       <!-- Vital readouts on left monitor -->
-      <text x="36" y="188" fill="#CC2020" font-family="monospace" font-size="14" font-weight="bold">118 BPM</text>
-      <text x="36" y="205" fill="#B45309" font-family="monospace" font-size="10">BP 92/58</text>
-      <text x="36" y="218" fill="#007A50" font-family="monospace" font-size="10">SpO2 94%</text>
+      <text x="36" y="188" fill="#CC2020" font-family="monospace" font-size="14" font-weight="bold"><tspan id="s1a-vital-hr">118 BPM</tspan></text>
+      <text x="36" y="205" fill="#B45309" font-family="monospace" font-size="10"><tspan id="s1a-vital-bp">BP 92/58</tspan></text>
+      <text x="36" y="218" fill="#007A50" font-family="monospace" font-size="10"><tspan id="s1a-vital-spo2">SpO2 94%</tspan></text>
       <!-- Defibrillator -->
       <rect x="700" y="60" width="100" height="80" rx="6" fill="#EEF8FF" stroke="#0099BB" stroke-width="1.5"/>
       <text x="750" y="100" text-anchor="middle" fill="#0077AA" font-family="monospace" font-size="9">DEFIB</text>
@@ -1267,13 +1267,13 @@ body { font-size: 15px; }
       <line x1="550" y1="90" x2="550" y2="60" stroke="#607D8B" stroke-width="1"/>
       <line x1="570" y1="90" x2="570" y2="60" stroke="#607D8B" stroke-width="1"/>
       <!-- Floating alarm text -->
-      <text x="450" y="30" text-anchor="middle" fill="#CC0000" font-family="monospace" font-size="11" font-weight="bold" opacity="1">⚠ ST ELEVATION · V2–V5 · STEMI PROTOCOL ACTIVE</text>
+      <text x="450" y="30" text-anchor="middle" fill="#CC0000" font-family="monospace" font-size="11" font-weight="bold" opacity="1"><tspan id="s1a-ecg-text">⚠ ST ELEVATION · V2–V5 · STEMI PROTOCOL ACTIVE</tspan></text>
     </svg>
     <div class="env-overlay"></div>
     <div class="env-hud">
-      <div class="env-label">Scenario 1-A · Cardiac Emergency Unit · 0847</div>
-      <div class="env-title">Mr. David Osei, 58M — "It's just indigestion"</div>
-      <div class="env-meta">15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.</div>
+      <div class="env-label" id="s1a-env-label">Scenario 1-A · Cardiac Emergency Unit · 0847</div>
+      <div class="env-title" id="s1a-env-title">Mr. David Osei, 58M — "It's just indigestion"</div>
+      <div class="env-meta" id="s1a-env-meta">15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.</div>
       <div class="env-badges"><span class="env-badge critical">STEMI Active</span><span class="env-badge warn">D-05 Primary</span><span class="env-badge">D-08 Prioritisation</span><span class="env-badge">ECG Interpretation</span></div>
     </div>
     <div class="env-timer" id="timer-s1a">⏱ 00:00 — Clinical Clock Running</div>
@@ -5241,6 +5241,45 @@ function getCurrentVariant(nodeId) {
 }
 // Initialise on first session start
 (function(){var origStart=window.startSession;if(typeof origStart==='function'){window.startSession=function(){var r=origStart.apply(this,arguments);loadVariants();if(typeof S!=='undefined')S.variantSeed=S.id;saveCurr&&saveCurr();return r;};}})();
+
+// V6 APPLY VARIANT TO PANEL
+function applyVariant(nodeId) {
+  if (!window.AIWIZN_VARIANTS) { setTimeout(function(){ applyVariant(nodeId); }, 200); return; }
+  var v = getCurrentVariant(nodeId);
+  if (!v) return;
+  function setText(id, val) { var el = document.getElementById(id); if (el && val != null) el.textContent = val; }
+  setText(nodeId + '-env-label', v.env_label);
+  setText(nodeId + '-env-title', v.env_title);
+  setText(nodeId + '-env-meta', v.env_meta);
+  if (v.vitals) {
+    setText(nodeId + '-vital-hr',   v.vitals.hr);
+    setText(nodeId + '-vital-bp',   v.vitals.bp);
+    setText(nodeId + '-vital-spo2', v.vitals.spo2);
+  }
+  if (v.ecg_banner) setText(nodeId + '-ecg-text', v.ecg_banner);
+  // Track which variant was shown (for analytics/repeatability)
+  if (typeof v5State !== 'undefined') {
+    v5State.variantsUsed = v5State.variantsUsed || {};
+    v5State.variantsUsed[nodeId] = v.variant_id;
+  }
+}
+// Wire into the navigation: when go(panel) is called, apply variant if available
+(function(){
+  var origGo = window.go;
+  if (typeof origGo === 'function') {
+    window.go = function(panelId) {
+      var r = origGo.apply(this, arguments);
+      try {
+        if (panelId && /^s\d/.test(panelId)) {
+          // Defer until DOM is settled
+          setTimeout(function(){ applyVariant(panelId); }, 50);
+        }
+      } catch(e) { console.warn('variant apply err:', e); }
+      return r;
+    };
+  }
+})();
+
 
 function v5RenderContinuumTrack() {
   var fc = v5State.firstChoices || {};
