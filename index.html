@@ -4656,6 +4656,7 @@ renderDash = function() {
   _v4RenderDash();
   v5RenderTrend();
   v5RenderHeatmap();
+  if (typeof v5RenderContinuumTrack === "function") v5RenderContinuumTrack();
 
   // INLINE COGNITA DASHBOARD PANELS
   try {
