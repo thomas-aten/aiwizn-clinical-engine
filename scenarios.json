@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "version": "6.0.0-scaffold",
+    "description": "AIWIZN scenario variant pool. Each node has multiple variants testing the same competency. Random selection per session keeps repeat assessments fresh while preserving psychometric integrity.",
+    "selection_strategy": "deterministic_seed_hash",
+    "competency_invariant": true,
+    "author": "AIWIZN / ATEN Inc 2026",
+    "contact": "Thomas@ateninc.com"
+  },
+  "variant_seeds": {
+    "_doc": "Seed is derived from session.id hashed against node-id. Same session always sees same variant; different sessions see different variants.",
+    "hash_algorithm": "djb2_simple"
+  },
+  "competency_targets": {
+    "_doc": "Each variant must score on the SAME competency target. This is what keeps the assessment psychometrically equivalent across variants.",
+    "s1a": {"primary": "D5", "secondary": "D6", "description": "Cardiac deterioration recognition + pharmacology choice under hypotension"},
+    "s1a2": {"primary": "D5", "secondary": "D6", "description": "Pharmacologic consequence recovery: stop-the-cause vs treat-the-symptom"},
+    "s1b1": {"primary": "D8", "secondary": "D2", "description": "Prioritisation under family pressure during STEMI"},
+    "s1b2": {"primary": "D7", "secondary": "D8", "description": "SBAR clarity to interventional cardiology team"},
+    "s1c": {"primary": "D3", "secondary": "D12", "description": "Ethical reasoning when patient refuses recommended intervention"},
+    "s2a": {"primary": "D5", "secondary": "D8", "description": "Stroke onset time validation"},
+    "s2a2": {"primary": "D6", "secondary": "D3", "description": "tPA risk-benefit decision under timeline uncertainty"},
+    "s2b": {"primary": "D2", "secondary": "D9", "description": "Therapeutic communication during stroke fear"},
+    "s2c": {"primary": "D11", "secondary": "D9", "description": "Social complexity at discharge planning"},
+    "s3a": {"primary": "D5", "secondary": "D6", "description": "Sepsis bundle initiation under uncertainty"},
+    "s3b": {"primary": "D4", "secondary": "D7", "description": "Psych safety: speaking up against senior physician"},
+    "s3c": {"primary": "D8", "secondary": "D5", "description": "Rising lactate trend interpretation"},
+    "s3c2": {"primary": "D8", "secondary": "D4", "description": "ICU escalation despite team friction"}
+  },
+  "variants": {
+    "s1a": [
+      {
+        "variant_id": "s1a_v1_classic",
+        "patient": {"age": 64, "sex": "M", "name": "Mr. Walker", "presenting": "Crushing chest pain x 35 min"},
+        "vitals": {"hr": 108, "bp": "92/58", "rr": 22, "spo2": 94, "temp": 37.1, "pain": 9},
+        "ecg": "ST elevation in II, III, aVF (inferior STEMI)",
+        "key_finding": "Inferior STEMI with relative hypotension - right ventricular involvement likely",
+        "choices": {"expert": "Aspirin 325mg + cautious morphine titration; hold nitro pending RV assessment", "mid": "Standard MONA protocol", "gap": "Sublingual nitroglycerin 0.4mg now"}
+      },
+      {
+        "variant_id": "s1a_v2_anterior",
+        "patient": {"age": 58, "sex": "F", "name": "Ms. Hartford", "presenting": "Substernal pressure radiating to left arm x 50 min"},
+        "vitals": {"hr": 96, "bp": "104/72", "rr": 20, "spo2": 96, "temp": 36.9, "pain": 7},
+        "ecg": "ST elevation V1-V4 (anterior STEMI)",
+        "key_finding": "Large anterior MI - LAD occlusion likely, high mortality risk",
+        "choices": {"expert": "Activate cath lab; dual antiplatelet load; door-to-balloon 90min target", "mid": "Aspirin and call cardiology", "gap": "Wait for repeat troponin"}
+      },
+      {
+        "variant_id": "s1a_v3_diabetic",
+        "patient": {"age": 71, "sex": "M", "name": "Mr. Okonkwo", "presenting": "Atypical: epigastric discomfort + diaphoresis x 90 min, no chest pain"},
+        "vitals": {"hr": 88, "bp": "148/92", "rr": 18, "spo2": 97, "temp": 37.0, "pain": 4},
+        "ecg": "Subtle ST depression V4-V6 + Q waves inferior leads",
+        "key_finding": "Silent MI in diabetic - atypical presentation, high index of suspicion required",
+        "choices": {"expert": "Treat as ACS despite atypical presentation; troponin + serial ECG", "mid": "Anti-acid trial first", "gap": "Dismiss as GI symptoms"}
+      }
+    ],
+    "s1a2": [
+      {
+        "variant_id": "s1a2_v1_hypotension",
+        "trigger_after": "s1a_v1_classic",
+        "event": "BP drops to 82/45 after nitroglycerin given",
+        "choices": {"expert": "Stop nitroglycerin immediately, fluid bolus, reassess", "mid": "Reduce nitro rate, observe", "gap": "Continue nitro, push fluids"}
+      },
+      {
+        "variant_id": "s1a2_v2_brady",
+        "trigger_after": "s1a_v1_classic",
+        "event": "HR drops to 42 with new AV block",
+        "choices": {"expert": "Atropine 0.5mg, prepare pacing pads, call cardiology", "mid": "Hold all rate-control meds", "gap": "Wait for spontaneous recovery"}
+      },
+      {
+        "variant_id": "s1a2_v3_arrest",
+        "trigger_after": "s1a_v2_anterior",
+        "event": "V-fib arrest in pre-cath holding bay",
+        "choices": {"expert": "Immediate defib 200J biphasic, CPR, code team", "mid": "Call code, start CPR", "gap": "Check pulse repeatedly"}
+      }
+    ],
+    "_NOTE": "Other nodes (s1b1, s1b2, s1c, s2a, s2a2, s2b, s2c, s3a, s3b, s3c, s3c2) follow the same schema. This file is the v6 scaffold; clinical authoring of remaining 30+ variants is Phase 2 of the build."
+  }
+}

@@ -1093,6 +1093,33 @@ body { font-size: 15px; }
 .plc-body p { font-size: 11px; color: rgba(255,255,255,.65); margin: 0; line-height: 1.5; }
 /* END PERSONA REDESIGN */
 
+/* ARIA STARTUP BRIEFING + FEEDBACK */
+.aria-briefing-overlay{position:fixed;inset:0;background:rgba(13,31,45,.72);z-index:9998;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.aria-briefing-overlay.open{display:flex;animation:abFade .3s ease-out}
+@keyframes abFade{from{opacity:0}to{opacity:1}}
+.aria-briefing{background:#fff;max-width:560px;width:90%;border-radius:18px;padding:36px 38px;box-shadow:0 20px 60px rgba(0,0,0,.35);font-family:Inter,sans-serif;animation:abSlide .4s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes abSlide{from{transform:translateY(20px) scale(.96);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.aria-briefing-icon{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#FF6B9D 0%,#C544A0 100%);display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 4px 16px rgba(197,68,160,.3)}
+.aria-briefing-icon svg{width:30px;height:30px}
+.aria-briefing h2{font-family:Instrument Serif,serif;font-size:28px;color:#0D2D47;margin:0 0 6px;font-weight:400;letter-spacing:-.01em}
+.aria-briefing-sub{font-family:JetBrains Mono,monospace;font-size:10px;color:#00A87A;letter-spacing:.16em;text-transform:uppercase;margin-bottom:20px;font-weight:700}
+.aria-briefing p{font-family:Instrument Serif,serif;font-size:16px;line-height:1.7;color:#2D3A4A;margin:0 0 14px}
+.ab-tip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:#F6FAF8;border-radius:10px;border-left:3px solid #00A87A;margin-bottom:10px;font-family:Inter,sans-serif;font-size:13.5px;line-height:1.55;color:#1A3050}
+.ab-tip-icon{flex-shrink:0;font-size:16px;line-height:1.6}
+.aria-briefing-cta{margin-top:24px;display:flex;justify-content:flex-end;gap:10px}
+.aria-briefing-cta button{font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.12em;padding:11px 22px;border-radius:8px;border:none;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.ab-skip{background:transparent;color:#6B7A8D}
+.ab-skip:hover{color:#0D2D47}
+.ab-start{background:linear-gradient(135deg,#00A87A 0%,#007A5A 100%);color:#fff;box-shadow:0 2px 8px rgba(0,168,122,.3)}
+.ab-start:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,168,122,.4)}
+.aria-feedback{margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;font-family:JetBrains Mono,monospace;font-size:10.5px;color:#6B7A8D;letter-spacing:.06em}
+.aria-feedback-label{flex:1}
+.aria-fb-btn{background:transparent;border:1px solid rgba(0,0,0,.1);width:34px;height:34px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-size:14px}
+.aria-fb-btn:hover{background:#F6FAF8;border-color:#00A87A}
+.aria-fb-btn.up.selected{background:rgba(0,168,122,.12);border-color:#00A87A;color:#00A87A}
+.aria-fb-btn.dn.selected{background:rgba(220,38,38,.08);border-color:#DC2626;color:#DC2626}
+.aria-fb-thanks{color:#00A87A;font-weight:600}
+
 </style>
 </head>
 <body>
@@ -1516,22 +1543,22 @@ body { font-size: 15px; }
         <div class="dec-body">The tPA bag is in your hand. The chart shows GI bleed 3 weeks ago. <strong>What do you do?</strong></div>
       </div>
       <div class="choices" id="ch-s1b1">
-        <div class="choice" data-type="gap" data-node="s1b_1" data-signal="D-04+D-06 CRITICAL GAP: Silent compliance with a contraindicated drug. Hanging tPA with GI bleed 3 weeks ago risks fatal haemorrhage. The administering nurse bears full clinical and legal responsibility.">
+        <div class="choice" data-type="gap" data-node="s1b1" data-signal="D-04+D-06 CRITICAL GAP: Silent compliance with a contraindicated drug. Hanging tPA with GI bleed 3 weeks ago risks fatal haemorrhage. The administering nurse bears full clinical and legal responsibility.">
           <div class="choice-id">A</div>
           <div class="choice-text">Hang the tPA — the physician has reviewed the patient and accepted the risk. Documenting your concern in the notes is sufficient; the prescribing decision belongs to the doctor.</div>
           <div class="choice-signal sig-gap">D-04+D-06 CRITICAL GAP: Silent compliance. Seniority is not a contraindication override. Nurse administers = nurse accountable. CRITICAL.</div>
         </div>
-        <div class="choice" data-type="mid" data-node="s1b_1" data-signal="D-06 ADEQUATE + D-04 PARTIAL: Concern is raised, but framed vaguely. Dr. Patel can answer yes and move on without engaging with the actual contraindication. Easier to deflect than a direct specific challenge.">
+        <div class="choice" data-type="mid" data-node="s1b1" data-signal="D-06 ADEQUATE + D-04 PARTIAL: Concern is raised, but framed vaguely. Dr. Patel can answer yes and move on without engaging with the actual contraindication. Easier to deflect than a direct specific challenge.">
           <div class="choice-id">B</div>
           <div class="choice-text">Ask Dr. Patel: 'I want to confirm before hanging — is there anything specific about the GI bleed I need to document?' Then proceed if he reconfirms the order.</div>
           <div class="choice-signal sig-mid">D-04 PARTIAL: Vague safety check. No contraindication named. Easily dismissed. Better than silent compliance but insufficient here.</div>
         </div>
-        <div class="choice" data-type="expert" data-node="s1b_1" data-signal="D-04 EXPERT + D-06 EXPERT: Names the exact contraindication. Names the safer alternative. Does not hang. Professional, direct, and non-accusatory. This is the correct first challenge — the second challenge is the real test.">
+        <div class="choice" data-type="expert" data-node="s1b1" data-signal="D-04 EXPERT + D-06 EXPERT: Names the exact contraindication. Names the safer alternative. Does not hang. Professional, direct, and non-accusatory. This is the correct first challenge — the second challenge is the real test.">
           <div class="choice-id">C</div>
           <div class="choice-text">"Dr. Patel — he had a GI bleed 3 weeks ago, a listed contraindication. Can you formally address this before I hang?" Pause infusion and document the exchange.</div>
           <div class="choice-signal sig-expert">D-04+D-06 EXPERT: Specific contraindication named. Safer alternative offered. Drug not hung. Professional direct challenge.</div>
         </div>
-        <div class="choice" data-type="gap" data-node="s1b_1" data-signal="D-06+D-04 GAP: Passing the safety concern to charge nurse instead of raising it directly with the ordering physician. The administering nurse owns this responsibility. Delay also allows Dr. Patel to proceed independently.">
+        <div class="choice" data-type="gap" data-node="s1b1" data-signal="D-06+D-04 GAP: Passing the safety concern to charge nurse instead of raising it directly with the ordering physician. The administering nurse owns this responsibility. Delay also allows Dr. Patel to proceed independently.">
           <div class="choice-id">D</div>
           <div class="choice-text">Step out and ask the charge nurse to come review the order — high-risk infusions should have pharmacist sign-off before hanging, and this is not a bedside nursing decision to make alone.</div>
           <div class="choice-signal sig-gap">D-04+D-06 GAP: Deflects responsibility. Physician may administer independently before charge nurse arrives. Safety gap unaddressed.</div>
@@ -1630,22 +1657,22 @@ body { font-size: 15px; }
         <div class="dec-body">He dismissed you. The drug is still in your hands. He's watching. <strong>What do you do now?</strong></div>
       </div>
       <div class="choices" id="ch-s1b2">
-        <div class="choice" data-type="gap" data-node="s1b_2" data-signal="D-04 CRITICAL GAP: Capitulation under authority. 30 years experience does not override an absolute contraindication. The nurse bears responsibility for administration. First challenge becomes meaningless.">
+        <div class="choice" data-type="gap" data-node="s1b2" data-signal="D-04 CRITICAL GAP: Capitulation under authority. 30 years experience does not override an absolute contraindication. The nurse bears responsibility for administration. First challenge becomes meaningless.">
           <div class="choice-id">A</div>
           <div class="choice-text">Apologise and hang the tPA. He is the attending cardiologist of record and the GI bleed was three weeks ago — the physician-nurse relationship means following his direct clinical judgment.</div>
           <div class="choice-signal sig-gap">D-04 CRITICAL GAP: Capitulated. Charted concern without refusal = same harm outcome. Seniority is not a contraindication override. CRITICAL flag.</div>
         </div>
-        <div class="choice" data-type="gap" data-node="s1b_2" data-signal="D-04 GAP: Leaving without stating an explicit hold allows Dr. Patel to administer the drug himself. Conflict avoidance is not a safe alternative to completing the safety challenge in the room.">
+        <div class="choice" data-type="gap" data-node="s1b2" data-signal="D-04 GAP: Leaving without stating an explicit hold allows Dr. Patel to administer the drug himself. Conflict avoidance is not a safe alternative to completing the safety challenge in the room.">
           <div class="choice-id">B</div>
           <div class="choice-text">Set the tPA down without speaking further, step out, and call the charge nurse. The situation has broken down — removing yourself and escalating through hierarchy is the appropriate response.</div>
           <div class="choice-signal sig-gap">D-04 GAP: Conflict avoidance. No explicit hold stated. Dr. Patel may administer independently. Safety gap left open.</div>
         </div>
-        <div class="choice" data-type="expert" data-node="s1b_2" data-signal="D-04 EXPERT + D-03 EXPERT: Holds firm using protocol, not personal opinion. Offers a concrete path (documented override or charge nurse review). De-personalises the safety challenge. Does not capitulate. Top 10% differentiator.">
+        <div class="choice" data-type="expert" data-node="s1b2" data-signal="D-04 EXPERT + D-03 EXPERT: Holds firm using protocol, not personal opinion. Offers a concrete path (documented override or charge nurse review). De-personalises the safety challenge. Does not capitulate. Top 10% differentiator.">
           <div class="choice-id">C</div>
           <div class="choice-text">"Dr. Patel, I need your documented review of the contraindication before I hang this. Can you add a note, or I'll need to escalate to the on-call attending." Document everything.</div>
           <div class="choice-signal sig-expert">D-04 + D-03 EXPERT: Holds firm. Protocol-grounded. Concrete escalation path offered. De-personalised. Does not capitulate. Top differentiator.</div>
         </div>
-        <div class="choice" data-type="mid" data-node="s1b_2" data-signal="D-04 ADEQUATE: Correct escalation — attending review will resolve this. However, no explicit hold stated in the room means a gap remains until the attending arrives. Simultaneously stating &quot;I will not hang until attending arrives&quot; strengthens this.">
+        <div class="choice" data-type="mid" data-node="s1b2" data-signal="D-04 ADEQUATE: Correct escalation — attending review will resolve this. However, no explicit hold stated in the room means a gap remains until the attending arrives. Simultaneously stating &quot;I will not hang until attending arrives&quot; strengthens this.">
           <div class="choice-id">D</div>
           <div class="choice-text">Tell Dr. Patel you are calling the on-call attending for a second opinion on the contraindication. This is a complex case and the final word should not rest on one clinical voice alone.</div>
           <div class="choice-signal sig-mid">D-04 ADEQUATE: Correct escalation. No explicit "do not administer" stated in the room. Gap remains until attending callback. One step needed.</div>
@@ -3005,8 +3032,8 @@ const DB = {
 const W = {
   s1a:  {D5:1.0, D6:.9, D8:.6},
   s1a2: {D7:1.0, D4:.5},
-  s1b_1:{D4:.6,  D6:.8},
-  s1b_2:{D4:1.0, D3:.5},
+  s1b1:{D4:.6,  D6:.8},
+  s1b2:{D4:1.0, D3:.5},
   s1c:  {D2:.9,  D3:.8, D9:.6},
   s2a:  {D5:.9,  D7:.7, D8:.7},
   s2a2: {D4:.8,  D7:.7},
@@ -3662,7 +3689,7 @@ const ARIA_S = {
     {t:`I wasn't sure if I was allowed to call directly`, r:`That is a legitimate concern. But most STEMI protocols explicitly include nursing activation. Every minute of delay costs roughly 1.9 million cardiomyocytes.`, f:`If you found out your unit allows direct activation — would that change how you would respond next time?`}
   ]},
 
-  s1b_1_gap: { d:1500, m:[
+  s1b1_gap: { d:1500, m:[
     `You administered the tPA without raising the GI bleed. That is the most common mechanism of serious medication error. What was going through your mind?`
   ], o:[
     {t:`I didn't notice the GI bleed in the chart`, r:`That is the honest answer, and it is a systems issue as much as an individual one. For high-risk drugs like thrombolytics, a structured contraindication check is part of the administration process — not optional.`, f:`What would a 30-second structured check look like for you before hanging a thrombolytic?`},
@@ -3670,7 +3697,7 @@ const ARIA_S = {
     {t:`I felt uncomfortable but didn't want to question him`, r:`That discomfort was your clinical instinct working correctly. The technique that helps: name the specific concern. "I saw GI bleed in his chart" is harder to dismiss than "I am not sure."`, f:null}
   ]},
 
-  s1b_2_gap: { d:1200, m:[
+  s1b2_gap: { d:1200, m:[
     `You challenged once, then backed down. Before the clinical side — how did that exchange feel?`
   ], o:[
     {t:`Uncomfortable — like I was being insubordinate`, r:`That feeling has a name: authority gradient anxiety. The technique that helps is depersonalisation: "Protocol requires" shifts the conflict from you versus him to him versus an institutional rule. You become the messenger, not the challenger.`, f:`Try saying this out loud: "Protocol requires a documented override before I can administer." Notice how it differs from "I am not comfortable with this."?`},
@@ -3747,7 +3774,55 @@ const ARIA_S = {
     {t:`The time pressure on the tPA window`, r:`Time pressure narrows attention and makes sequential thinking feel like the only option. The expert move is parallel action, which requires overriding that instinct deliberately. Name it next time it happens — that is the start of changing it.`, f:null},
     {t:`The language access scenario — a systems failure`, r:`It is a systems failure. And yet the nurse in the room still has a decision to make within it. You saw it clearly. The harder follow-on: what did you do with that clarity in the scenario?`, f:null}
   ]}
-};
+,
+  s1a2_gap: { d:1800, m:[
+    \`The consequence is unfolding. Your patient is now hypotensive. Pause - what is the priority right now? Stop the offending agent first, or chase the symptoms?\`
+  ], o:[
+    {t:\`Stop nitroglycerin and reassess BP\`, w:\`Yes - root cause first. The drip stays off until BP recovers, then we revisit pain control with morphine and a smaller dose only if pressure tolerates.\`},
+    {t:\`Push fluids while continuing nitro\`, w:\`Fluids without stopping the cause is treating the smoke and ignoring the fire. The pharmacology is the cause - it must come off first.\`},
+    {t:\`Just observe and recheck in 5 minutes\`, w:\`Hypotension at 82/45 with pharmacologic cause is not a watching problem. Action is required now - stop the agent, then reassess.\`}
+  ]},
+  s1a2_expert: { d:2200, m:[
+    \`You stopped the nitroglycerin and called for fluids. Notice what just happened - you recognised that the medication caused the drop and acted on the cause, not the symptom. That is expert-level pharmacology reasoning.\`
+  ], o:[]},
+  s1a2_mid: { d:1800, m:[
+    \`You took a measured action. There is more to this picture - what would you tell your charge nurse in the SBAR right now about why this happened?\`
+  ], o:[
+    {t:\`Patient hypotensive after nitro - drip stopped\`, w:\`That is the right SBAR core. Add the BP trend and the pain score and you have a complete handover.\`},
+    {t:\`Just say BP dropped, holding off meds\`, w:\`Too thin. The receiver needs the cause-effect link to anticipate what comes next.\`}
+  ]},
+  s2a2_gap: { d:1800, m:[
+    \`The tPA window is closing. Family says last known well was 3 hours ago - but the wife is uncertain. Do you push for tPA based on the optimistic timeline, or hold for further imaging and confirmation?\`
+  ], o:[
+    {t:\`Hold tPA, get repeat imaging and confirm timing\`, w:\`Right call. tPA outside the window or with uncertain timing causes more harm than benefit. Confirm before you commit.\`},
+    {t:\`Push tPA - the window may close\`, w:\`Speed without certainty is dangerous here. The 4.5-hour window is hard - guessing the timing risks intracranial haemorrhage.\`},
+    {t:\`Defer to neurology without further input\`, w:\`Deferring is not a decision. Your clinical judgement on timing matters - the team needs your assessment of the family timeline.\`}
+  ]},
+  s2a2_expert: { d:2200, m:[
+    \`You held tPA pending confirmation. That patience under pressure is exactly the discipline this scenario tests - you protected the patient from a wrong-window administration.\`
+  ], o:[]},
+  s2a2_mid: { d:1800, m:[
+    \`You took a balanced position. What would tip you toward tPA versus toward holding - what is the threshold of certainty you would need on the timing?\`
+  ], o:[
+    {t:\`Multiple corroborating witnesses on time\`, w:\`Yes - timing certainty drives the decision. Single uncertain witness is not enough.\`},
+    {t:\`Just clinical gestalt\`, w:\`Gestalt is necessary but not sufficient. tPA needs documented timing.\`}
+  ]},
+  s3c2_gap: { d:1800, m:[
+    \`Sepsis bundle is at hour 3. Lactate is rising despite fluids. Your colleague suggests waiting another hour before escalating. What is your move?\`
+  ], o:[
+    {t:\`Escalate to ICU now - rising lactate is a red flag\`, w:\`Right. Rising lactate post-resuscitation is organ-failure progression - this is an ICU patient now, not a watching patient.\`},
+    {t:\`Wait the hour as colleague suggested\`, w:\`Deference to a colleague over the data is a known failure mode. The lactate is the data - it overrides comfort.\`},
+    {t:\`Add another fluid bolus and recheck\`, w:\`More fluids without source control on a rising-lactate sepsis is a partial answer. Escalation goes alongside, not instead.\`}
+  ]},
+  s3c2_expert: { d:2200, m:[
+    \`You escalated despite team friction. That kind of independent clinical judgement under social pressure is what protects patients in real units.\`
+  ], o:[]},
+  s3c2_mid: { d:1800, m:[
+    \`You moved partially. The lactate trend is the most important signal here - what does a rising lactate after fluid resuscitation actually tell you?\`
+  ], o:[
+    {t:\`Tissue hypoperfusion despite volume - source control needed\`, w:\`Exactly. Fluid alone has not reached the source. The patient needs source control plus pressors.\`},
+    {t:\`Just dehydration\`, w:\`Lactate after adequate fluid resuscitation is not dehydration - it is organ-level oxygen debt. Different problem, different treatment.\`}
+  ]}};
 
 // ── ARIA STATE ───────────────────────────────────────────────
 let _ariaExpertFired = false;  // expert_1 only fires once
@@ -3894,6 +3969,13 @@ function ariaTrigger(nodeId, type) {
     });
     setTimeout(function() {
       ariaSetOpts(scr.o, nodeId);
+      try {
+        if (typeof buildAriaFeedbackHTML === 'function' && opts) {
+          var fbWrap = document.createElement('div');
+          fbWrap.innerHTML = buildAriaFeedbackHTML(key);
+          opts.appendChild(fbWrap.firstChild);
+        }
+      } catch(e) {}
     }, delay + 200);
   }, scr.d);
 }
@@ -4322,7 +4404,7 @@ function v5VitalReact(nodeId, type) {
 
 // ── GOLDILOCKS ADAPTIVE SCAFFOLDING ──────────────────────────
 var GL_SCAFFOLDS = {
-  s1b:{triggerIf:'s1b_1',triggerType:'gap',hint:`Before deciding — you have already named the contraindication once. The next question is what you do when expert authority dismisses a correct safety concern. "Protocol requires" depersonalises the challenge and makes it institutional rather than interpersonal.`},
+  s1b:{triggerIf:'s1b1',triggerType:'gap',hint:`Before deciding — you have already named the contraindication once. The next question is what you do when expert authority dismisses a correct safety concern. "Protocol requires" depersonalises the challenge and makes it institutional rather than interpersonal.`},
   s2b:{triggerIf:'s2a',triggerType:'gap',hint:`Recall: Mrs. Reyes is aphasic and lacks capacity. Her husband is present. Under common law necessity doctrine, next-of-kin can provide substitute decision-maker consent in emergencies. This is standard practice, not an exception.`},
   s3b:{triggerIf:'s3a',triggerType:'gap',hint:`The SSC Hour-1 Bundle is a named, published guideline. "Surviving Sepsis Campaign Hour-1 Bundle requires empiric antibiotics within one hour of sepsis recognition" is the citation that carries institutional authority when a pharmacist disagrees.`},
   s2c:{triggerIf:'s1c',triggerType:'gap',hint:`Phone interpreter services are available 24/7. JCAHO requires qualified interpretation for clinical discussions — this is not optional. The barrier is usually not availability; it is knowing the access number.`}
@@ -4781,7 +4863,7 @@ function v5RenderHeatmap() {
   var sessions = [];
   try { sessions = JSON.parse(localStorage.getItem('aiwizn_sessions')||'[]'); } catch(e) {}
   if (!sessions.length) { grid.innerHTML=''; return; }
-  var NODE_NAMES = {s1a:'STEMI',s1b_1:'tPA Ch.1',s1b_2:'tPA Ch.2',s1c:'DNR Ethics',s2a:'FAST/BP',s2b:'tPA Consent',s2c:'Language',s3a:'Sepsis Rec.',s3b:'Bundle',s3c:'Shock/ICU'};
+  var NODE_NAMES = {s1a:'STEMI',s1b1:'tPA Ch.1',s1b2:'tPA Ch.2',s1c:'DNR Ethics',s2a:'FAST/BP',s2b:'tPA Consent',s2c:'Language',s3a:'Sepsis Rec.',s3b:'Bundle',s3c:'Shock/ICU'};
   var totals={}, gaps={};
   sessions.forEach(function(ss) {
     var fc = ss.firstChoices||ss.firstChoices||ss.choices||{};
@@ -4804,7 +4886,7 @@ function v5ExportCSV() {
   var sessions = [];
   try { sessions = JSON.parse(localStorage.getItem('aiwizn_sessions')||'[]'); } catch(e) {}
   if (!sessions.length) { toast('No sessions to export','t-warn'); return; }
-  var nodeKeys = Object.keys({s1a:1,s1a2:1,s1b_1:1,s1b_2:1,s1c:1,s2a:1,s2a2:1,s2b:1,s2c:1,s3a:1,s3b:1,s3c:1,s3c2:1});
+  var nodeKeys = Object.keys({s1a:1,s1a2:1,s1b1:1,s1b2:1,s1c:1,s2a:1,s2a2:1,s2b:1,s2c:1,s3a:1,s3b:1,s3c:1,s3c2:1});
   var header = ['Session','Nurse','Unit','Date','NWI'].concat(nodeKeys.map(function(k){return k+'_first';})).join(',');
   var rows = sessions.map(function(ss) {
     var fc = ss.firstChoices||ss.firstChoices||ss.choices||{};
@@ -5006,7 +5088,7 @@ startSession = function() {
       // If first choice was gap and current choice is still gap = confirmed gap
       var nodeId = nc; // nc has underscores stripped
       var fc = v5State.firstChoices || {};
-      // Find matching key (nc might be s1b2 but key is s1b_2)
+      // Find matching key (nc might be s1b2 but key is s1b2)
       var matchKey = Object.keys(fc).find(function(k) { return k.replace(/_/g,'') === nc; });
       if (matchKey && fc[matchKey] === 'gap') {
         if (!v5State.confirmedGaps) v5State.confirmedGaps = [];
@@ -5131,6 +5213,35 @@ function _stealthCell(label, val, col, sub) {
 /* END COGNITA EXTENDED */
 
 /* ── CONTINUUM PROGRESS TRACK JS ─────────────────────── */
+// ARIA STARTUP BRIEFING + FEEDBACK
+function openAriaBriefing(){var seen=localStorage.getItem('aiwizn_aria_briefed');if(seen==='1')return;var el=document.getElementById('aria-briefing');if(el)el.classList.add('open');}
+function closeAriaBriefing(skipped){var el=document.getElementById('aria-briefing');if(el)el.classList.remove('open');localStorage.setItem('aiwizn_aria_briefed','1');if(!skipped){try{if(typeof v5State!=='undefined')v5State.ariaBriefingEngaged=true;}catch(e){}}}
+(function(){var origStart=window.startSession;if(typeof origStart==='function'){window.startSession=function(){var r=origStart.apply(this,arguments);setTimeout(openAriaBriefing,600);return r;};}})();
+function recordAriaFeedback(scriptKey,rating){try{var fb=JSON.parse(localStorage.getItem('aiwizn_aria_feedback')||'[]');fb.push({key:scriptKey,rating:rating,ts:Date.now(),nurse:(typeof S!=='undefined')?S.nurse:null,session:(typeof S!=='undefined')?S.id:null});if(fb.length>200)fb=fb.slice(-200);localStorage.setItem('aiwizn_aria_feedback',JSON.stringify(fb));if(typeof v5State!=='undefined'){v5State.ariaFeedback=v5State.ariaFeedback||[];v5State.ariaFeedback.push({key:scriptKey,rating:rating,ts:Date.now()});}}catch(e){console.warn('aria fb err:',e);}var widget=document.querySelector('.aria-feedback[data-key="'+scriptKey+'"]');if(widget){widget.querySelectorAll('.aria-fb-btn').forEach(function(b){b.classList.remove('selected');});var sel=widget.querySelector('.aria-fb-btn.'+(rating==='up'?'up':'dn'));if(sel)sel.classList.add('selected');var label=widget.querySelector('.aria-feedback-label');if(label)label.innerHTML='<span class=\"aria-fb-thanks\">Thanks &mdash; your feedback helps refine ARIA.</span>';}}
+function buildAriaFeedbackHTML(scriptKey){return '<div class="aria-feedback" data-key="'+scriptKey+'"><span class="aria-feedback-label">Was this prompt helpful?</span><button class="aria-fb-btn up" onclick="recordAriaFeedback(\''+scriptKey+'\',\'up\')">&#10003;</button><button class="aria-fb-btn dn" onclick="recordAriaFeedback(\''+scriptKey+'\',\'down\')">&#10005;</button></div>';}
+
+// V6 SCENARIO VARIANT SELECTION ENGINE
+window.AIWIZN_VARIANTS = null;
+function loadVariants() {
+  if (window.AIWIZN_VARIANTS) return Promise.resolve(window.AIWIZN_VARIANTS);
+  return fetch('scenarios.json').then(function(r){ return r.json(); }).then(function(j){ window.AIWIZN_VARIANTS = j; return j; }).catch(function(e){ console.warn('variants not loaded:', e); return null; });
+}
+function djb2(str){var h=5381;for(var i=0;i<str.length;i++)h=((h<<5)+h)+str.charCodeAt(i);return Math.abs(h);}
+function pickVariant(nodeId, sessionSeed) {
+  if (!window.AIWIZN_VARIANTS || !window.AIWIZN_VARIANTS.variants || !window.AIWIZN_VARIANTS.variants[nodeId]) return null;
+  var pool = window.AIWIZN_VARIANTS.variants[nodeId];
+  if (!Array.isArray(pool) || !pool.length) return null;
+  var seed = sessionSeed || (typeof S !== 'undefined' && S.id) || Date.now();
+  var idx = djb2(nodeId + ':' + seed) % pool.length;
+  return pool[idx];
+}
+function getCurrentVariant(nodeId) {
+  var seed = (typeof S !== 'undefined' && S.id) ? S.id : Date.now();
+  return pickVariant(nodeId, seed);
+}
+// Initialise on first session start
+(function(){var origStart=window.startSession;if(typeof origStart==='function'){window.startSession=function(){var r=origStart.apply(this,arguments);loadVariants();if(typeof S!=='undefined')S.variantSeed=S.id;saveCurr&&saveCurr();return r;};}})();
+
 function v5RenderContinuumTrack() {
   var fc = v5State.firstChoices || {};
   var s1done = ['s1a','s1a2','s1b1','s1b2','s1c'].some(function(k){return !!fc[k];});
@@ -5361,7 +5472,7 @@ function v5RevealConsequence(nodeId) {
 /* ── QUICK NAV AFTER CHOICE ──────────────────────────── */
 var QUICK_NAV_MAP = {
   s1a2: {target:'s1b',  label:'Continue to Authority Challenge →'},
-  s1b_2:{target:'s1c',  label:'Continue to DNR Ethics →'},
+  s1b2:{target:'s1c',  label:'Continue to DNR Ethics →'},
   s1c:  {target:'s2a',  label:'Begin Scenario 2: Stroke →'},
   s2a2: {target:'s2b',  label:'Continue to tPA Window →'},
   s2b:  {target:'s2c',  label:'Continue to Language Barrier →'},
@@ -5399,8 +5510,8 @@ function v5ShowQuickNav(nodeId) {
 ═══════════════════════════════════════════════════════ */
 
 var NODE_LABELS = {
-  s1a:'STEMI Response', 's1a2':'SBAR Handoff', 's1b_1':'tPA Challenge 1',
-  's1b_2':'tPA Challenge 2', 's1c':'DNR Ethics', 's2a':'FAST / BP Decision',
+  s1a:'STEMI Response', 's1a2':'SBAR Handoff', 's1b1':'tPA Challenge 1',
+  's1b2':'tPA Challenge 2', 's1c':'DNR Ethics', 's2a':'FAST / BP Decision',
   's2a2':'SDM Consent', 's2b':'tPA Window', 's2c':'Language Access',
   's3a':'Sepsis Recognition', 's3b':'1-Hour Bundle', 's3c':'Septic Shock',
   's3c2':'Moral Resilience', 'rt1':'Retest Mrs. Nkosi', 'persona':'End of Session'
@@ -5566,7 +5677,7 @@ function sendToSupabase(session) {
     position_bias_a:  positionBiasA,
 
     s1a:   fc['s1a']   || null, s1a2:  fc['s1a2']  || null,
-    s1b_1: fc['s1b_1'] || null, s1b_2: fc['s1b_2'] || null, s1c: fc['s1c'] || null,
+    s1b1: fc['s1b1'] || null, s1b2: fc['s1b2'] || null, s1c: fc['s1c'] || null,
     s2a:   fc['s2a']   || null, s2a2:  fc['s2a2']  || null, s2b: fc['s2b'] || null, s2c: fc['s2c'] || null,
     s3a:   fc['s3a']   || null, s3b:   fc['s3b']   || null, s3c: fc['s3c'] || null, s3c2: fc['s3c2']|| null,
     rt1:   rfc['rt1']  || null,
@@ -5632,6 +5743,19 @@ function sendToAirtable(session) { return sendToSupabase(session); }
   <div id="aria-msgs"></div>
   <div id="aria-opts"></div>
 </div>
+
+<!-- ARIA STARTUP BRIEFING -->
+<div class="aria-briefing-overlay" id="aria-briefing"><div class="aria-briefing">
+<div class="aria-briefing-icon"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h2v-6h-2v6zm0-8h2V7h-2v2z"/></svg></div>
+<h2>Hi, I'm ARIA</h2>
+<div class="aria-briefing-sub">YOUR VIRTUAL CLINICAL MENTOR</div>
+<p>This is not a test of speed. This is an <strong>experiential pathway</strong>. Take your time. Read the vitals. Look at the trends. Consider the team, the family, the patient.</p>
+<div class="ab-tip"><span class="ab-tip-icon">&#9201;</span><span><strong>Slow down.</strong> Real clinical judgement happens in seconds, not microseconds. Sit with each decision.</span></div>
+<div class="ab-tip"><span class="ab-tip-icon">&#8634;</span><span><strong>You can change your mind.</strong> If new information shifts your reasoning, revise. Self-correction is a strength, not a flaw.</span></div>
+<div class="ab-tip"><span class="ab-tip-icon">&#9734;</span><span><strong>There are no right or wrong paths</strong> &mdash; only different experiential ones. Your decisions reveal how you reason, not whether you pass.</span></div>
+<div class="ab-tip"><span class="ab-tip-icon">&#9995;</span><span>I&rsquo;ll appear during the assessment to ask reflective questions. Engage with me when you&rsquo;d like to think out loud.</span></div>
+<div class="aria-briefing-cta"><button class="ab-skip" onclick="closeAriaBriefing(true)">Skip Briefing</button><button class="ab-start" onclick="closeAriaBriefing(false)">I&rsquo;m Ready</button></div>
+</div></div>
 
 </body>
 </html>
