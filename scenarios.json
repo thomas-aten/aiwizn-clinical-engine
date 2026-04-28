@@ -1,95 +1,591 @@
 {
   "_meta": {
-    "version": "6.2.0",
-    "description": "AIWIZN scenario variant pool. 3 clinical variants per node across all 13 scenario nodes. Each variant tests the same competency target. Phase 1 author draft - SME sign-off pending.",
+    "version": "6.3.0",
+    "description": "AIWIZN scenario variant pool. 39 variants across 13 nodes. v6.3.0 corrects sub-node alignment between variant content and the actual choice text in the app.",
     "selection_strategy": "deterministic_seed_hash",
     "competency_invariant": true,
     "author": "AIWIZN / ATEN Inc 2026",
     "contact": "Thomas@ateninc.com",
     "copyright": "AIWIZN/ATEN Inc 2026 - Private & Confidential",
     "variant_count": 39,
-    "sme_review_status": "phase_1_draft"
+    "sme_review_status": "phase_1_draft",
+    "sub_node_alignment": "corrected_v6.3"
   },
   "competency_targets": {
-    "s1a":  {"primary": "D5", "secondary": "D6"},
-    "s1a2": {"primary": "D5", "secondary": "D6"},
-    "s1b1": {"primary": "D8", "secondary": "D2"},
-    "s1b2": {"primary": "D7", "secondary": "D8"},
-    "s1c":  {"primary": "D3", "secondary": "D12"},
-    "s2a":  {"primary": "D5", "secondary": "D8"},
-    "s2a2": {"primary": "D6", "secondary": "D3"},
-    "s2b":  {"primary": "D2", "secondary": "D9"},
-    "s2c":  {"primary": "D11", "secondary": "D9"},
-    "s3a":  {"primary": "D5", "secondary": "D6"},
-    "s3b":  {"primary": "D4", "secondary": "D7"},
-    "s3c":  {"primary": "D8", "secondary": "D5"},
-    "s3c2": {"primary": "D8", "secondary": "D4"}
+    "s1a": {
+      "primary": "D5",
+      "secondary": "D6"
+    },
+    "s1a2": {
+      "primary": "D7",
+      "secondary": "D8"
+    },
+    "s1b1": {
+      "primary": "D6",
+      "secondary": "D4"
+    },
+    "s1b2": {
+      "primary": "D4",
+      "secondary": "D3"
+    },
+    "s1c": {
+      "primary": "D3",
+      "secondary": "D12"
+    },
+    "s2a": {
+      "primary": "D5",
+      "secondary": "D8"
+    },
+    "s2a2": {
+      "primary": "D4",
+      "secondary": "D7"
+    },
+    "s2b": {
+      "primary": "D2",
+      "secondary": "D9"
+    },
+    "s2c": {
+      "primary": "D11",
+      "secondary": "D9"
+    },
+    "s3a": {
+      "primary": "D5",
+      "secondary": "D6"
+    },
+    "s3b": {
+      "primary": "D4",
+      "secondary": "D7"
+    },
+    "s3c": {
+      "primary": "D8",
+      "secondary": "D5"
+    },
+    "s3c2": {
+      "primary": "D12",
+      "secondary": "D2"
+    }
   },
   "variants": {
     "s1a": [
-      {"variant_id": "s1a_v1_anterolateral", "label": "Anterolateral STEMI - hypotensive", "env_label": "Scenario 1-A . Cardiac Emergency Unit . 0847", "env_title": "Mr. David Osei, 58M - 'It is just indigestion'", "env_meta": "15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.", "vitals": {"hr": "118 BPM", "bp": "BP 92/58", "spo2": "SpO2 94%"}, "ecg_banner": "WARNING ST ELEVATION . V2-V5 . STEMI PROTOCOL ACTIVE"},
-      {"variant_id": "s1a_v2_inferior_rv", "label": "Inferior STEMI with RV involvement", "env_label": "Scenario 1-A . Cardiac Emergency Unit . 0623", "env_title": "Mr. Walker Hayes, 64M - 'It feels like an elephant on my chest'", "env_meta": "Brought in by paramedics. Pain onset 35 minutes ago while shovelling snow. Diaphoretic, anxious, pointing at sternum.", "vitals": {"hr": "108 BPM", "bp": "BP 92/58", "spo2": "SpO2 94%"}, "ecg_banner": "WARNING ST ELEVATION . II/III/aVF . INFERIOR STEMI . RV INVOLVEMENT LIKELY"},
-      {"variant_id": "s1a_v3_silent_diabetic", "label": "Silent MI - atypical diabetic presentation", "env_label": "Scenario 1-A . Cardiac Emergency Unit . 1442", "env_title": "Mr. Theodore Okonkwo, 71M - 'Just a bit of indigestion'", "env_meta": "Type 2 diabetic, walked into triage 90 minutes after symptom onset. No chest pain. Subtle Q waves on ECG. Wife noticed clamminess in the car.", "vitals": {"hr": "88 BPM", "bp": "BP 148/92", "spo2": "SpO2 97%"}, "ecg_banner": "WARNING ST DEPRESSION V4-V6 . NEW Q WAVES . SILENT MI SUSPECTED"}
+      {
+        "variant_id": "s1a_v1_anterolateral",
+        "label": "Anterolateral STEMI - hypotensive",
+        "env_label": "Scenario 1-A . Cardiac Emergency Unit . 0847",
+        "env_title": "Mr. David Osei, 58M - 'It is just indigestion'",
+        "env_meta": "15 minutes ago he walked in. Now on the monitor: ST elevation, chest pressure radiating to jaw, diaphoresis.",
+        "vitals": {
+          "hr": "118 BPM",
+          "bp": "BP 92/58",
+          "spo2": "SpO2 94%"
+        },
+        "ecg_banner": "WARNING ST ELEVATION . V2-V5 . STEMI PROTOCOL ACTIVE"
+      },
+      {
+        "variant_id": "s1a_v2_inferior_rv",
+        "label": "Inferior STEMI with RV involvement",
+        "env_label": "Scenario 1-A . Cardiac Emergency Unit . 0623",
+        "env_title": "Mr. Walker Hayes, 64M - 'It feels like an elephant on my chest'",
+        "env_meta": "Brought in by paramedics. Pain onset 35 minutes ago while shovelling snow. Diaphoretic, anxious, pointing at sternum.",
+        "vitals": {
+          "hr": "108 BPM",
+          "bp": "BP 92/58",
+          "spo2": "SpO2 94%"
+        },
+        "ecg_banner": "WARNING ST ELEVATION . II/III/aVF . INFERIOR STEMI . RV INVOLVEMENT LIKELY"
+      },
+      {
+        "variant_id": "s1a_v3_silent_diabetic",
+        "label": "Silent MI - atypical diabetic presentation",
+        "env_label": "Scenario 1-A . Cardiac Emergency Unit . 1442",
+        "env_title": "Mr. Theodore Okonkwo, 71M - 'Just a bit of indigestion'",
+        "env_meta": "Type 2 diabetic, walked into triage 90 minutes after symptom onset. No chest pain. Subtle Q waves on ECG. Wife noticed clamminess in the car.",
+        "vitals": {
+          "hr": "88 BPM",
+          "bp": "BP 148/92",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "WARNING ST DEPRESSION V4-V6 . NEW Q WAVES . SILENT MI SUSPECTED"
+      }
     ],
     "s1a2": [
-      {"variant_id": "s1a2_v1_hypotension", "label": "Post-NTG hypotension", "env_label": "Scenario 1-A consequence . 7 min later", "env_title": "BP collapsing - what just happened", "env_meta": "Two minutes after sublingual nitro the monitor alarm goes off. SBP 82/45. Patient pale, clammy. The team looks to you.", "vitals": {"hr": "122 BPM", "bp": "BP 82/45", "spo2": "SpO2 91%"}, "ecg_banner": "ALARM HYPOTENSIVE . PERSISTENT ST ELEVATION . PRELOAD COMPROMISE"},
-      {"variant_id": "s1a2_v2_brady_av_block", "label": "New AV block - bradycardia", "env_label": "Scenario 1-A consequence . 4 min later", "env_title": "HR crashing - new conduction block", "env_meta": "On the strip a new dropped beat appears. HR drifts from 88 to 42 over 3 minutes. Wide QRS pattern emerging.", "vitals": {"hr": "42 BPM", "bp": "BP 88/52", "spo2": "SpO2 95%"}, "ecg_banner": "ALARM NEW 2nd DEGREE AV BLOCK . PACING PADS REQUESTED"},
-      {"variant_id": "s1a2_v3_arrest", "label": "V-fib arrest in pre-cath", "env_label": "Scenario 1-A consequence . 12 min later", "env_title": "Witnessed V-fib in holding bay", "env_meta": "You are at the side of the gurney waiting for cath transfer. The monitor goes from sinus to V-fib in real time. No pulse.", "vitals": {"hr": "-- BPM", "bp": "BP --/--", "spo2": "SpO2 --%"}, "ecg_banner": "CRITICAL VENTRICULAR FIBRILLATION . CODE BLUE . SHOCK INDICATED"}
+      {
+        "variant_id": "s1a2_v1_handover_inferior",
+        "label": "SBAR to interventionalist - inferior STEMI",
+        "env_label": "Scenario 1-A handover . phone to cath lab",
+        "env_title": "Dr. Marquez scrubbing - 30 seconds to land SBAR",
+        "env_meta": "You have the interventional cardiologist on the line. She is gowning. Sixty seconds before she goes scrub side. Your SBAR has to be tight.",
+        "vitals": {
+          "hr": "108 BPM",
+          "bp": "BP 92/58",
+          "spo2": "SpO2 94%"
+        },
+        "ecg_banner": "INFERIOR STEMI . CATH READY . VERBAL ORDER NEEDED"
+      },
+      {
+        "variant_id": "s1a2_v2_handover_anterior",
+        "label": "SBAR to interventionalist - anterior STEMI",
+        "env_label": "Scenario 1-A handover . phone to cath lab",
+        "env_title": "Dr. Chen on the line - one shot to give the picture",
+        "env_meta": "Anterior STEMI activated. Door-to-balloon clock at 38 minutes. The interventionalist will be in the room in 8 minutes. Lead the SBAR.",
+        "vitals": {
+          "hr": "102 BPM",
+          "bp": "BP 138/84",
+          "spo2": "SpO2 96%"
+        },
+        "ecg_banner": "ANTERIOR STEMI . D2B 38min . VERBAL ORDER NEEDED"
+      },
+      {
+        "variant_id": "s1a2_v3_handover_complex",
+        "label": "SBAR with anticoag complication",
+        "env_label": "Scenario 1-A handover . phone to cath lab",
+        "env_title": "Dr. Iyer needs the warfarin detail or she flies blind",
+        "env_meta": "STEMI confirmed. Patient on chronic warfarin, INR 3.2. The interventionalist is asking the question and you need to deliver SBAR plus the anticoag piece without burying the lead.",
+        "vitals": {
+          "hr": "98 BPM",
+          "bp": "BP 122/76",
+          "spo2": "SpO2 95%"
+        },
+        "ecg_banner": "STEMI ON WARFARIN . INR 3.2 . VERBAL ORDER NEEDED"
+      }
     ],
     "s1b1": [
-      {"variant_id": "s1b1_v1_family_pressure", "label": "Family demanding more time", "env_label": "Scenario 1-B-1 . ED bay 3 . 4 min before cath", "env_title": "Wife at bedside - 'Wait until our daughter gets here'", "env_meta": "Cath lab is ready. Door-to-balloon clock is ticking. Patient is stable but the wife is grabbing your sleeve, asking you to wait 15 minutes for the daughter to arrive.", "vitals": {"hr": "96 BPM", "bp": "BP 128/76", "spo2": "SpO2 96%"}, "ecg_banner": "STABLE STEMI . CATH LAB READY . D2B 64 MIN ELAPSED"},
-      {"variant_id": "s1b1_v2_three_patients", "label": "Three patients pulling at once", "env_label": "Scenario 1-B-1 . ED . high-acuity afternoon", "env_title": "Bed 3 STEMI . Bed 7 chest pain rising . Bed 12 fall", "env_meta": "You are charge for the pod. Bed 3 needs cath transfer now. Bed 7 troponin is climbing and they want vitals. Bed 12 just slid out of the chair. The phone is ringing.", "vitals": {"hr": "112 BPM", "bp": "BP 138/82", "spo2": "SpO2 95%"}, "ecg_banner": "PRIORITY STEMI BED 3 . MULTIPLE COMPETING DEMANDS"},
-      {"variant_id": "s1b1_v3_translator_delay", "label": "Language barrier slowing consent", "env_label": "Scenario 1-B-1 . ED . consent for cath", "env_title": "Patient speaks Vietnamese - phone interpreter on hold", "env_meta": "Cath lab is ready. You need verbal consent for PCI. The phone interpreter line has been on hold for 11 minutes. The patient nods at everything but you are not sure he understands.", "vitals": {"hr": "98 BPM", "bp": "BP 122/74", "spo2": "SpO2 96%"}, "ecg_banner": "STABLE STEMI . CONSENT PENDING . LANGUAGE ACCESS BARRIER"}
+      {
+        "variant_id": "s1b1_v1_gi_bleed",
+        "label": "tPA challenge - recent GI bleed",
+        "env_label": "Scenario 1-B-1 . tPA contraindication challenge",
+        "env_title": "Dr. Patel ordering tPA - patient bled 3 weeks ago",
+        "env_meta": "Stroke confirmed. Dr. Patel just ordered tPA. The chart shows GI bleed requiring transfusion 3 weeks ago - an absolute contraindication. He has not noticed. The drug is on its way up.",
+        "vitals": {
+          "hr": "94 BPM",
+          "bp": "BP 168/92",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "tPA ORDERED . CONTRAINDICATION MISSED . FIRST CHALLENGE NOW"
+      },
+      {
+        "variant_id": "s1b1_v2_recent_surgery",
+        "label": "tPA challenge - major surgery 10 days ago",
+        "env_label": "Scenario 1-B-1 . tPA contraindication challenge",
+        "env_title": "Dr. Patel ordering tPA - post-op CABG day 10",
+        "env_meta": "Stroke onset 90 minutes ago. Dr. Patel ordered tPA without scrolling to the surgical history. CABG 10 days ago. Major surgery within 14 days is a contraindication. Pharmacy is preparing the dose.",
+        "vitals": {
+          "hr": "88 BPM",
+          "bp": "BP 158/88",
+          "spo2": "SpO2 96%"
+        },
+        "ecg_banner": "tPA ORDERED . POST-OP D10 . FIRST CHALLENGE NOW"
+      },
+      {
+        "variant_id": "s1b1_v3_intracranial_bleed_hx",
+        "label": "tPA challenge - prior intracranial haemorrhage",
+        "env_label": "Scenario 1-B-1 . tPA contraindication challenge",
+        "env_title": "Dr. Patel ordering tPA - prior ICH on imaging",
+        "env_meta": "Stroke acute. CT shows old haemorrhagic stroke from 2022 in addition to the new ischaemic event. Prior ICH is an absolute contraindication. Dr. Patel is reading recent labs, not the imaging.",
+        "vitals": {
+          "hr": "92 BPM",
+          "bp": "BP 172/96",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "tPA ORDERED . PRIOR ICH ON CT . FIRST CHALLENGE NOW"
+      }
     ],
     "s1b2": [
-      {"variant_id": "s1b2_v1_handover_basic", "label": "Standard cath lab handover", "env_label": "Scenario 1-B-2 . phone to interventional cardiology", "env_title": "Dr. Chen on the line - give SBAR now", "env_meta": "Interventional cardiologist picks up. She is scrubbing in 4 minutes. She says: 'Quick - what do I need to know?' You have one chance to land this.", "vitals": {"hr": "100 BPM", "bp": "BP 124/78", "spo2": "SpO2 96%"}, "ecg_banner": "HANDOVER . ANTEROLATERAL STEMI . 64 MIN FROM ONSET"},
-      {"variant_id": "s1b2_v2_handover_anticoag", "label": "Patient on warfarin - bleeding risk", "env_label": "Scenario 1-B-2 . phone to cath lab . anticoag complication", "env_title": "INR 3.4 - cardiology needs to know now", "env_meta": "Patient on chronic warfarin for AFib. INR back at 3.4. The interventionalist needs this in the SBAR or she will be flying blind in the lab.", "vitals": {"hr": "104 BPM", "bp": "BP 118/72", "spo2": "SpO2 95%"}, "ecg_banner": "HANDOVER . STEMI ON WARFARIN . INR 3.4"},
-      {"variant_id": "s1b2_v3_handover_unstable", "label": "Unstable patient mid-handover", "env_label": "Scenario 1-B-2 . phone . patient deteriorating", "env_title": "BP dropping while you are on the call", "env_meta": "Mid-SBAR the BP cuff cycles to 86/48. The cardiologist is still listening. Do you stop the SBAR to act, or finish the SBAR so she walks in prepared?", "vitals": {"hr": "118 BPM", "bp": "BP 86/48", "spo2": "SpO2 93%"}, "ecg_banner": "DETERIORATING STEMI . LIVE HANDOVER"}
+      {
+        "variant_id": "s1b2_v1_authority_30yrs",
+        "label": "Hold firm under authority pushback",
+        "env_label": "Scenario 1-B-2 . second challenge",
+        "env_title": "Dr. Patel: 30 years, never had a problem",
+        "env_meta": "You raised the contraindication. Dr. Patel pushes back: 30 years experience, the bleed was minor, give the drug. He is leaning over the desk. The chart is open. The drug is at the bedside.",
+        "vitals": {
+          "hr": "94 BPM",
+          "bp": "BP 168/92",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "AUTHORITY PUSHBACK . NURSE HOLDING SAFETY POSITION"
+      },
+      {
+        "variant_id": "s1b2_v2_team_pressure",
+        "label": "Hold firm with peer pressure",
+        "env_label": "Scenario 1-B-2 . peer + team pressure",
+        "env_title": "Charge nurse: just give it - he is the doc",
+        "env_meta": "Your charge nurse pulls you aside: stop slowing things down, let the doctor doctor. You know the contraindication is real. Three colleagues are watching. Hold or fold?",
+        "vitals": {
+          "hr": "88 BPM",
+          "bp": "BP 158/88",
+          "spo2": "SpO2 96%"
+        },
+        "ecg_banner": "PEER PRESSURE . SAFETY POSITION HOLDING"
+      },
+      {
+        "variant_id": "s1b2_v3_time_pressure",
+        "label": "Hold firm against time pressure",
+        "env_label": "Scenario 1-B-2 . window pressure",
+        "env_title": "Window closes in 18 min - Dr. Patel: just hang it",
+        "env_meta": "tPA window closing. Dr. Patel: every minute we waste arguing is a minute of brain dying. The contraindication is real. The clock is also real. He is escalating his voice.",
+        "vitals": {
+          "hr": "92 BPM",
+          "bp": "BP 172/96",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "WINDOW 18min . AUTHORITY ESCALATION . HOLD POSITION"
+      }
     ],
     "s1c": [
-      {"variant_id": "s1c_v1_refuse_cath", "label": "Patient refuses cath - religious", "env_label": "Scenario 1-C . post-stabilisation . autonomy", "env_title": "Patient: 'I want to go home and pray'", "env_meta": "After initial stabilisation he tells you he is a Jehovahs Witness, will not accept blood, and wants to leave AMA. The cardiologist wants the cath. You are between them.", "vitals": {"hr": "82 BPM", "bp": "BP 132/78", "spo2": "SpO2 97%"}, "ecg_banner": "STABILISED . PATIENT REQUESTING DISCHARGE AMA"},
-      {"variant_id": "s1c_v2_capacity_question", "label": "Capacity in question", "env_label": "Scenario 1-C . capacity assessment", "env_title": "Refusing care - mild dementia history", "env_meta": "Patient adamantly refuses. Family says he has mild cognitive impairment but no formal dementia diagnosis. He answers some questions correctly, others not. Capacity is not obvious.", "vitals": {"hr": "88 BPM", "bp": "BP 128/74", "spo2": "SpO2 96%"}, "ecg_banner": "STABILISED . CAPACITY EVALUATION REQUIRED"},
-      {"variant_id": "s1c_v3_advance_directive", "label": "Advance directive conflict", "env_label": "Scenario 1-C . advance directive review", "env_title": "DNR on file - but family wants 'everything'", "env_meta": "Chart shows valid DNR / DNI. Daughter just arrived from out of state, says 'You will do everything for my dad.' Patient is now drowsy and not answering. Decisions need to happen in minutes.", "vitals": {"hr": "94 BPM", "bp": "BP 108/64", "spo2": "SpO2 92%"}, "ecg_banner": "DNR ON FILE . FAMILY OVERRIDE REQUEST"}
+      {
+        "variant_id": "s1c_v1_refuse_cath",
+        "label": "Patient refuses cath - religious",
+        "env_label": "Scenario 1-C . post-stabilisation . autonomy",
+        "env_title": "Patient: 'I want to go home and pray'",
+        "env_meta": "After initial stabilisation he tells you he is a Jehovahs Witness, will not accept blood, and wants to leave AMA. The cardiologist wants the cath. You are between them.",
+        "vitals": {
+          "hr": "82 BPM",
+          "bp": "BP 132/78",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "STABILISED . PATIENT REQUESTING DISCHARGE AMA"
+      },
+      {
+        "variant_id": "s1c_v2_capacity_question",
+        "label": "Capacity in question",
+        "env_label": "Scenario 1-C . capacity assessment",
+        "env_title": "Refusing care - mild dementia history",
+        "env_meta": "Patient adamantly refuses. Family says he has mild cognitive impairment but no formal dementia diagnosis. He answers some questions correctly, others not. Capacity is not obvious.",
+        "vitals": {
+          "hr": "88 BPM",
+          "bp": "BP 128/74",
+          "spo2": "SpO2 96%"
+        },
+        "ecg_banner": "STABILISED . CAPACITY EVALUATION REQUIRED"
+      },
+      {
+        "variant_id": "s1c_v3_advance_directive",
+        "label": "Advance directive conflict",
+        "env_label": "Scenario 1-C . advance directive review",
+        "env_title": "DNR on file - but family wants 'everything'",
+        "env_meta": "Chart shows valid DNR / DNI. Daughter just arrived from out of state, says 'You will do everything for my dad.' Patient is now drowsy and not answering. Decisions need to happen in minutes.",
+        "vitals": {
+          "hr": "94 BPM",
+          "bp": "BP 108/64",
+          "spo2": "SpO2 92%"
+        },
+        "ecg_banner": "DNR ON FILE . FAMILY OVERRIDE REQUEST"
+      }
     ],
     "s2a": [
-      {"variant_id": "s2a_v1_uncertain_onset", "label": "Wake-up stroke - onset unknown", "env_label": "Scenario 2-A . Stroke Unit . 0612", "env_title": "Mrs. Faye Brennan, 67F - 'I woke up like this'", "env_meta": "Spouse called 911 at 0540 when she could not speak clearly. She last spoke normally at 2300 last night. She is here now at 0612. The clock is ambiguous.", "vitals": {"hr": "82 BPM", "bp": "BP 168/94", "spo2": "SpO2 97%"}, "ecg_banner": "NIHSS 14 . LKW UNCERTAIN . tPA WINDOW QUESTIONABLE"},
-      {"variant_id": "s2a_v2_clear_onset", "label": "Witnessed onset - 90 min ago", "env_label": "Scenario 2-A . Stroke Unit . 1334", "env_title": "Mr. Hassan Karimi, 58M - witnessed onset", "env_meta": "Was on a video call with his daughter. She saw his face droop at 1204. He is here now at 1334. Onset is anchored.", "vitals": {"hr": "94 BPM", "bp": "BP 184/102", "spo2": "SpO2 98%"}, "ecg_banner": "NIHSS 18 . LKW 1204 . tPA WINDOW OPEN"},
-      {"variant_id": "s2a_v3_atypical_presentation", "label": "Atypical - posterior circulation", "env_label": "Scenario 2-A . Stroke Unit . 0844", "env_title": "Mrs. Aoife Sullivan, 73F - dizzy and clumsy", "env_meta": "Sudden onset vertigo, vomiting, ataxic gait. NIHSS only 4 because the standard scale misses posterior circulation strokes. Family says onset 60 minutes ago.", "vitals": {"hr": "78 BPM", "bp": "BP 152/88", "spo2": "SpO2 97%"}, "ecg_banner": "NIHSS 4 . POSTERIOR CIRCULATION SUSPECTED . SCALE UNDER-CALLS"}
+      {
+        "variant_id": "s2a_v1_uncertain_onset",
+        "label": "Wake-up stroke - onset unknown",
+        "env_label": "Scenario 2-A . Stroke Unit . 0612",
+        "env_title": "Mrs. Faye Brennan, 67F - 'I woke up like this'",
+        "env_meta": "Spouse called 911 at 0540 when she could not speak clearly. She last spoke normally at 2300 last night. She is here now at 0612. The clock is ambiguous.",
+        "vitals": {
+          "hr": "82 BPM",
+          "bp": "BP 168/94",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "NIHSS 14 . LKW UNCERTAIN . tPA WINDOW QUESTIONABLE"
+      },
+      {
+        "variant_id": "s2a_v2_clear_onset",
+        "label": "Witnessed onset - 90 min ago",
+        "env_label": "Scenario 2-A . Stroke Unit . 1334",
+        "env_title": "Mr. Hassan Karimi, 58M - witnessed onset",
+        "env_meta": "Was on a video call with his daughter. She saw his face droop at 1204. He is here now at 1334. Onset is anchored.",
+        "vitals": {
+          "hr": "94 BPM",
+          "bp": "BP 184/102",
+          "spo2": "SpO2 98%"
+        },
+        "ecg_banner": "NIHSS 18 . LKW 1204 . tPA WINDOW OPEN"
+      },
+      {
+        "variant_id": "s2a_v3_atypical_presentation",
+        "label": "Atypical - posterior circulation",
+        "env_label": "Scenario 2-A . Stroke Unit . 0844",
+        "env_title": "Mrs. Aoife Sullivan, 73F - dizzy and clumsy",
+        "env_meta": "Sudden onset vertigo, vomiting, ataxic gait. NIHSS only 4 because the standard scale misses posterior circulation strokes. Family says onset 60 minutes ago.",
+        "vitals": {
+          "hr": "78 BPM",
+          "bp": "BP 152/88",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "NIHSS 4 . POSTERIOR CIRCULATION SUSPECTED . SCALE UNDER-CALLS"
+      }
     ],
     "s2a2": [
-      {"variant_id": "s2a2_v1_window_closing", "label": "Window closing under uncertainty", "env_label": "Scenario 2-A-2 . tPA decision . 4h05min from suspected onset", "env_title": "Window narrowing - timing not definitive", "env_meta": "Family says she 'seemed fine' at lunch but he is not 100% sure. The 4.5h window is in 25 minutes. Push tPA on optimistic timing, or hold for confirmation?", "vitals": {"hr": "86 BPM", "bp": "BP 178/96", "spo2": "SpO2 97%"}, "ecg_banner": "tPA WINDOW 4h05 ELAPSED . TIMING DISPUTED"},
-      {"variant_id": "s2a2_v2_bp_too_high", "label": "BP above tPA threshold", "env_label": "Scenario 2-A-2 . tPA decision . BP problem", "env_title": "BP 196/108 - over threshold for tPA", "env_meta": "Onset clear at 90 minutes. NIHSS 16. But BP is 196/108 - above the 185/110 tPA cutoff. Treat the BP first or risk haemorrhage.", "vitals": {"hr": "98 BPM", "bp": "BP 196/108", "spo2": "SpO2 98%"}, "ecg_banner": "tPA CONTRAINDICATION . BP > 185/110"},
-      {"variant_id": "s2a2_v3_recent_anticoag", "label": "Recent DOAC - bleed risk", "env_label": "Scenario 2-A-2 . tPA decision . anticoag history", "env_title": "On apixaban - last dose this morning", "env_meta": "NIHSS 14, onset 100 minutes. Patient on apixaban for AFib, last dose 6 hours ago. tPA in this setting is high bleed risk. Endovascular thrombectomy may be the only safe option.", "vitals": {"hr": "84 BPM", "bp": "BP 162/88", "spo2": "SpO2 98%"}, "ecg_banner": "tPA HIGH RISK . RECENT DOAC . THROMBECTOMY CONSIDER"}
+      {
+        "variant_id": "s2a2_v1_consent_paralysis",
+        "label": "Resident hesitating on tPA consent",
+        "env_label": "Scenario 2-A-2 . consent advocacy",
+        "env_title": "Dr. Kim freezing - NIHSS 16 and falling",
+        "env_meta": "Stroke confirmed. NIHSS 16 and worsening. Window 22 min remaining. Dr. Kim - second-year resident - is hesitating about consent because the patient cannot sign. The husband is right there as SDM. Help her see the path.",
+        "vitals": {
+          "hr": "86 BPM",
+          "bp": "BP 178/96",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "CONSENT FRICTION . SDM PRESENT . WINDOW 22min"
+      },
+      {
+        "variant_id": "s2a2_v2_bp_threshold_question",
+        "label": "BP at threshold - clinical knowledge advocacy",
+        "env_label": "Scenario 2-A-2 . BP threshold dispute",
+        "env_title": "BP 188/106 - Dr. Kim wants to wait and treat",
+        "env_meta": "Dr. Kim wants to start labetalol first because BP is 188/106. AHA threshold is 185/110. Treating delays tPA 10-15 min for a value already under cutoff. You have the data. She has the order pad.",
+        "vitals": {
+          "hr": "92 BPM",
+          "bp": "BP 188/106",
+          "spo2": "SpO2 98%"
+        },
+        "ecg_banner": "BP NEAR THRESHOLD . DELAY RISK . CLINICAL CHALLENGE"
+      },
+      {
+        "variant_id": "s2a2_v3_window_advocacy",
+        "label": "Window closing - resident still gathering",
+        "env_label": "Scenario 2-A-2 . window pressure",
+        "env_title": "Dr. Kim asking for one more imaging study",
+        "env_meta": "CT done. NIHSS 14. Window in 14 min. Dr. Kim wants a CTA before tPA. The CTA queue is 25 min. The data already supports treatment. Advocate for the patient or defer?",
+        "vitals": {
+          "hr": "88 BPM",
+          "bp": "BP 168/92",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "WINDOW 14min . FURTHER IMAGING DELAY RISK"
+      }
     ],
     "s2b": [
-      {"variant_id": "s2b_v1_acute_fear", "label": "Patient in acute terror", "env_label": "Scenario 2-B . bedside . post-tPA infusion start", "env_title": "'Am I going to die? Am I going to die?'", "env_meta": "tPA running. Patient is gripping your wrist, repeating the same question. Spouse is crying in the corner. You have 60 seconds before the next vitals check.", "vitals": {"hr": "108 BPM", "bp": "BP 168/92", "spo2": "SpO2 98%"}, "ecg_banner": "tPA INFUSING . PATIENT DISTRESSED . THERAPEUTIC PRESENCE NEEDED"},
-      {"variant_id": "s2b_v2_dissociation", "label": "Patient dissociating", "env_label": "Scenario 2-B . bedside . non-responsive psychological", "env_title": "Eyes open, not engaging, not aphasic", "env_meta": "NIHSS done - aphasia ruled out. She just stares past you. The neurologist says she is shutting down emotionally, not neurologically. The deficit is fear, not stroke.", "vitals": {"hr": "96 BPM", "bp": "BP 154/86", "spo2": "SpO2 99%"}, "ecg_banner": "DISSOCIATIVE PRESENTATION . NEURO INTACT"},
-      {"variant_id": "s2b_v3_family_dynamics", "label": "Family conflict at bedside", "env_label": "Scenario 2-B . bedside . family blocking access", "env_title": "Daughter and son arguing across the bed", "env_meta": "Adult children disagree loudly about whether mom 'wanted this kind of treatment'. Patient is right there, hearing every word, post-tPA. You need them out without alienating them.", "vitals": {"hr": "102 BPM", "bp": "BP 162/88", "spo2": "SpO2 98%"}, "ecg_banner": "FAMILY CONFLICT AT BEDSIDE . PATIENT EXPOSED TO ARGUMENT"}
+      {
+        "variant_id": "s2b_v1_acute_fear",
+        "label": "Patient in acute terror",
+        "env_label": "Scenario 2-B . bedside . post-tPA infusion start",
+        "env_title": "'Am I going to die? Am I going to die?'",
+        "env_meta": "tPA running. Patient is gripping your wrist, repeating the same question. Spouse is crying in the corner. You have 60 seconds before the next vitals check.",
+        "vitals": {
+          "hr": "108 BPM",
+          "bp": "BP 168/92",
+          "spo2": "SpO2 98%"
+        },
+        "ecg_banner": "tPA INFUSING . PATIENT DISTRESSED . THERAPEUTIC PRESENCE NEEDED"
+      },
+      {
+        "variant_id": "s2b_v2_dissociation",
+        "label": "Patient dissociating",
+        "env_label": "Scenario 2-B . bedside . non-responsive psychological",
+        "env_title": "Eyes open, not engaging, not aphasic",
+        "env_meta": "NIHSS done - aphasia ruled out. She just stares past you. The neurologist says she is shutting down emotionally, not neurologically. The deficit is fear, not stroke.",
+        "vitals": {
+          "hr": "96 BPM",
+          "bp": "BP 154/86",
+          "spo2": "SpO2 99%"
+        },
+        "ecg_banner": "DISSOCIATIVE PRESENTATION . NEURO INTACT"
+      },
+      {
+        "variant_id": "s2b_v3_family_dynamics",
+        "label": "Family conflict at bedside",
+        "env_label": "Scenario 2-B . bedside . family blocking access",
+        "env_title": "Daughter and son arguing across the bed",
+        "env_meta": "Adult children disagree loudly about whether mom 'wanted this kind of treatment'. Patient is right there, hearing every word, post-tPA. You need them out without alienating them.",
+        "vitals": {
+          "hr": "102 BPM",
+          "bp": "BP 162/88",
+          "spo2": "SpO2 98%"
+        },
+        "ecg_banner": "FAMILY CONFLICT AT BEDSIDE . PATIENT EXPOSED TO ARGUMENT"
+      }
     ],
     "s2c": [
-      {"variant_id": "s2c_v1_unsafe_discharge", "label": "Unsafe to discharge home alone", "env_label": "Scenario 2-C . discharge planning . day 3", "env_title": "Lives alone - mild residual deficit", "env_meta": "NIHSS down to 2. Mild left hand weakness. Lives alone in a 4th floor walk-up. No family in the city. Insurance only covers 5 days inpatient.", "vitals": {"hr": "72 BPM", "bp": "BP 138/82", "spo2": "SpO2 98%"}, "ecg_banner": "DISCHARGE PLANNING . SOCIAL VULNERABILITY HIGH"},
-      {"variant_id": "s2c_v2_caregiver_burden", "label": "Caregiver burden invisible", "env_label": "Scenario 2-C . discharge . spouse caregiver", "env_title": "Wife is the caregiver - she is exhausted", "env_meta": "His wife is 72, has her own COPD on home oxygen, and has been at the bedside since admission. She says 'I will manage' but you watched her cry quietly when he could not name the spoon.", "vitals": {"hr": "68 BPM", "bp": "BP 132/76", "spo2": "SpO2 97%"}, "ecg_banner": "DISCHARGE PLANNING . CAREGIVER AT RISK"},
-      {"variant_id": "s2c_v3_housing_food_insecure", "label": "Housing and food insecure", "env_label": "Scenario 2-C . discharge . SDoH crisis", "env_title": "No fixed address - meds in fridge required", "env_meta": "Anticoagulant Rx requires refrigeration. Patient has been couch-surfing for 6 weeks. Discharge to 'home' is technically the shelter. Standard discharge will fail.", "vitals": {"hr": "76 BPM", "bp": "BP 142/86", "spo2": "SpO2 97%"}, "ecg_banner": "DISCHARGE BARRIER . HOUSING + REFRIGERATION REQUIRED"}
+      {
+        "variant_id": "s2c_v1_unsafe_discharge",
+        "label": "Unsafe to discharge home alone",
+        "env_label": "Scenario 2-C . discharge planning . day 3",
+        "env_title": "Lives alone - mild residual deficit",
+        "env_meta": "NIHSS down to 2. Mild left hand weakness. Lives alone in a 4th floor walk-up. No family in the city. Insurance only covers 5 days inpatient.",
+        "vitals": {
+          "hr": "72 BPM",
+          "bp": "BP 138/82",
+          "spo2": "SpO2 98%"
+        },
+        "ecg_banner": "DISCHARGE PLANNING . SOCIAL VULNERABILITY HIGH"
+      },
+      {
+        "variant_id": "s2c_v2_caregiver_burden",
+        "label": "Caregiver burden invisible",
+        "env_label": "Scenario 2-C . discharge . spouse caregiver",
+        "env_title": "Wife is the caregiver - she is exhausted",
+        "env_meta": "His wife is 72, has her own COPD on home oxygen, and has been at the bedside since admission. She says 'I will manage' but you watched her cry quietly when he could not name the spoon.",
+        "vitals": {
+          "hr": "68 BPM",
+          "bp": "BP 132/76",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "DISCHARGE PLANNING . CAREGIVER AT RISK"
+      },
+      {
+        "variant_id": "s2c_v3_housing_food_insecure",
+        "label": "Housing and food insecure",
+        "env_label": "Scenario 2-C . discharge . SDoH crisis",
+        "env_title": "No fixed address - meds in fridge required",
+        "env_meta": "Anticoagulant Rx requires refrigeration. Patient has been couch-surfing for 6 weeks. Discharge to 'home' is technically the shelter. Standard discharge will fail.",
+        "vitals": {
+          "hr": "76 BPM",
+          "bp": "BP 142/86",
+          "spo2": "SpO2 97%"
+        },
+        "ecg_banner": "DISCHARGE BARRIER . HOUSING + REFRIGERATION REQUIRED"
+      }
     ],
     "s3a": [
-      {"variant_id": "s3a_v1_septic_shock_initial", "label": "Bundle hour 1 - source unclear", "env_label": "Scenario 3-A . MICU . hour 1 of sepsis bundle", "env_title": "Mrs. Penelope Marsh, 74F - urosepsis or pneumonia", "env_meta": "Lactate 4.2. SBP 86 after 1L crystalloid. Source unclear - dirty UA but also new infiltrate on CXR. Bundle clock running. Antibiotic choice matters.", "vitals": {"hr": "118 BPM", "bp": "BP 86/48", "spo2": "SpO2 92%"}, "ecg_banner": "SEPTIC SHOCK . LACTATE 4.2 . SOURCE AMBIGUOUS . BUNDLE H1"},
-      {"variant_id": "s3a_v2_neutropenic", "label": "Neutropenic fever - chemo patient", "env_label": "Scenario 3-A . oncology . neutropenic sepsis", "env_title": "Mr. Gabriel Romero, 56M - day 12 post-chemo", "env_meta": "ANC 0.4. Temp 39.1. BP 96/58 trending down. Neutropenic fever protocol must run within 60 minutes. Single-source antibiotics will not cover.", "vitals": {"hr": "126 BPM", "bp": "BP 96/58", "spo2": "SpO2 94%"}, "ecg_banner": "NEUTROPENIC SEPSIS . ANC 0.4 . PROTOCOL H1 . BROAD COVERAGE REQUIRED"},
-      {"variant_id": "s3a_v3_post_op", "label": "Post-op day 2 - subtle decompensation", "env_label": "Scenario 3-A . surgical floor . post-op day 2", "env_title": "Ms. Lin Zhao, 62F - subtle change", "env_meta": "Day 2 after laparoscopic colectomy. Reports mild fatigue. HR has crept up over 6 hours. Lactate just back at 2.8. Looks 'OK' but the trend is wrong. Early sepsis or noise?", "vitals": {"hr": "112 BPM", "bp": "BP 108/64", "spo2": "SpO2 95%"}, "ecg_banner": "OCCULT SEPSIS SUSPECTED . LACTATE 2.8 . SUBTLE TREND"}
+      {
+        "variant_id": "s3a_v1_septic_shock_initial",
+        "label": "Bundle hour 1 - source unclear",
+        "env_label": "Scenario 3-A . MICU . hour 1 of sepsis bundle",
+        "env_title": "Mrs. Penelope Marsh, 74F - urosepsis or pneumonia",
+        "env_meta": "Lactate 4.2. SBP 86 after 1L crystalloid. Source unclear - dirty UA but also new infiltrate on CXR. Bundle clock running. Antibiotic choice matters.",
+        "vitals": {
+          "hr": "118 BPM",
+          "bp": "BP 86/48",
+          "spo2": "SpO2 92%"
+        },
+        "ecg_banner": "SEPTIC SHOCK . LACTATE 4.2 . SOURCE AMBIGUOUS . BUNDLE H1"
+      },
+      {
+        "variant_id": "s3a_v2_neutropenic",
+        "label": "Neutropenic fever - chemo patient",
+        "env_label": "Scenario 3-A . oncology . neutropenic sepsis",
+        "env_title": "Mr. Gabriel Romero, 56M - day 12 post-chemo",
+        "env_meta": "ANC 0.4. Temp 39.1. BP 96/58 trending down. Neutropenic fever protocol must run within 60 minutes. Single-source antibiotics will not cover.",
+        "vitals": {
+          "hr": "126 BPM",
+          "bp": "BP 96/58",
+          "spo2": "SpO2 94%"
+        },
+        "ecg_banner": "NEUTROPENIC SEPSIS . ANC 0.4 . PROTOCOL H1 . BROAD COVERAGE REQUIRED"
+      },
+      {
+        "variant_id": "s3a_v3_post_op",
+        "label": "Post-op day 2 - subtle decompensation",
+        "env_label": "Scenario 3-A . surgical floor . post-op day 2",
+        "env_title": "Ms. Lin Zhao, 62F - subtle change",
+        "env_meta": "Day 2 after laparoscopic colectomy. Reports mild fatigue. HR has crept up over 6 hours. Lactate just back at 2.8. Looks 'OK' but the trend is wrong. Early sepsis or noise?",
+        "vitals": {
+          "hr": "112 BPM",
+          "bp": "BP 108/64",
+          "spo2": "SpO2 95%"
+        },
+        "ecg_banner": "OCCULT SEPSIS SUSPECTED . LACTATE 2.8 . SUBTLE TREND"
+      }
     ],
     "s3b": [
-      {"variant_id": "s3b_v1_authority_pushback", "label": "Senior physician dismisses concern", "env_label": "Scenario 3-B . MICU . authority gradient", "env_title": "Attending: 'She is fine - stop calling me'", "env_meta": "You called Dr. Patel 20 min ago about a rising HR and falling BP. He told you to give a fluid bolus and stop calling. The trend is now worse. He is in another bay.", "vitals": {"hr": "132 BPM", "bp": "BP 84/52", "spo2": "SpO2 91%"}, "ecg_banner": "DETERIORATION DESPITE ORDERS . ESCALATION REQUIRED"},
-      {"variant_id": "s3b_v2_unsafe_order", "label": "Order that does not match patient", "env_label": "Scenario 3-B . MICU . order verification", "env_title": "Dose ordered is 10x normal", "env_meta": "Order entered for vasopressor at 10x typical starting dose. The resident insists it is correct. The pharmacist is on break. The patient is being prepped for the drip now.", "vitals": {"hr": "118 BPM", "bp": "BP 88/54", "spo2": "SpO2 93%"}, "ecg_banner": "ORDER VERIFICATION FAILURE . DOSE 10x EXPECTED"},
-      {"variant_id": "s3b_v3_team_dynamic", "label": "Team friction blocking action", "env_label": "Scenario 3-B . MICU . cross-team conflict", "env_title": "ICU and ED teams arguing over admit", "env_meta": "ED says 'admit her'. ICU says 'she is not sick enough'. The patient sits in the hall on a gurney while they negotiate. You think she is septic and getting sicker.", "vitals": {"hr": "114 BPM", "bp": "BP 96/58", "spo2": "SpO2 93%"}, "ecg_banner": "INTER-TEAM FRICTION . PATIENT IN HALL"}
+      {
+        "variant_id": "s3b_v1_authority_pushback",
+        "label": "Senior physician dismisses concern",
+        "env_label": "Scenario 3-B . MICU . authority gradient",
+        "env_title": "Attending: 'She is fine - stop calling me'",
+        "env_meta": "You called Dr. Patel 20 min ago about a rising HR and falling BP. He told you to give a fluid bolus and stop calling. The trend is now worse. He is in another bay.",
+        "vitals": {
+          "hr": "132 BPM",
+          "bp": "BP 84/52",
+          "spo2": "SpO2 91%"
+        },
+        "ecg_banner": "DETERIORATION DESPITE ORDERS . ESCALATION REQUIRED"
+      },
+      {
+        "variant_id": "s3b_v2_unsafe_order",
+        "label": "Order that does not match patient",
+        "env_label": "Scenario 3-B . MICU . order verification",
+        "env_title": "Dose ordered is 10x normal",
+        "env_meta": "Order entered for vasopressor at 10x typical starting dose. The resident insists it is correct. The pharmacist is on break. The patient is being prepped for the drip now.",
+        "vitals": {
+          "hr": "118 BPM",
+          "bp": "BP 88/54",
+          "spo2": "SpO2 93%"
+        },
+        "ecg_banner": "ORDER VERIFICATION FAILURE . DOSE 10x EXPECTED"
+      },
+      {
+        "variant_id": "s3b_v3_team_dynamic",
+        "label": "Team friction blocking action",
+        "env_label": "Scenario 3-B . MICU . cross-team conflict",
+        "env_title": "ICU and ED teams arguing over admit",
+        "env_meta": "ED says 'admit her'. ICU says 'she is not sick enough'. The patient sits in the hall on a gurney while they negotiate. You think she is septic and getting sicker.",
+        "vitals": {
+          "hr": "114 BPM",
+          "bp": "BP 96/58",
+          "spo2": "SpO2 93%"
+        },
+        "ecg_banner": "INTER-TEAM FRICTION . PATIENT IN HALL"
+      }
     ],
     "s3c": [
-      {"variant_id": "s3c_v1_rising_lactate", "label": "Lactate rising despite fluids", "env_label": "Scenario 3-C . MICU . hour 3 of bundle", "env_title": "Lactate now 5.8 - up from 4.2 at admission", "env_meta": "3L crystalloid in. Antibiotics broad. But lactate keeps climbing. SBP only 92 with one pressor. Source control may be missing or the patient needs more.", "vitals": {"hr": "126 BPM", "bp": "BP 92/56", "spo2": "SpO2 93%"}, "ecg_banner": "REFRACTORY SEPSIS . LACTATE TREND 4.2 -> 5.8"},
-      {"variant_id": "s3c_v2_fluid_overload", "label": "Volume overload - new crackles", "env_label": "Scenario 3-C . MICU . hour 4 . fluid problem", "env_title": "4L in - new bibasilar crackles - BP still 88", "env_meta": "4L resuscitation done. Lactate dropping but BP not recovering and now lungs are wet. Pressors needed. More fluid is no longer the answer.", "vitals": {"hr": "118 BPM", "bp": "BP 88/54", "spo2": "SpO2 89%"}, "ecg_banner": "VOLUME OVERLOAD . PRESSORS REQUIRED"},
-      {"variant_id": "s3c_v3_aki_developing", "label": "AKI developing under sepsis", "env_label": "Scenario 3-C . MICU . renal complication", "env_title": "Cr from 0.9 to 2.4 in 8 hours", "env_meta": "Sepsis management going. But the kidneys are failing fast - oliguric, creatinine doubled, potassium climbing. Renal replacement therapy may be hours away.", "vitals": {"hr": "108 BPM", "bp": "BP 102/62", "spo2": "SpO2 95%"}, "ecg_banner": "AKI . OLIGURIC . K+ 5.8 . CRRT CONSIDER"}
+      {
+        "variant_id": "s3c_v1_rising_lactate",
+        "label": "Lactate rising despite fluids",
+        "env_label": "Scenario 3-C . MICU . hour 3 of bundle",
+        "env_title": "Lactate now 5.8 - up from 4.2 at admission",
+        "env_meta": "3L crystalloid in. Antibiotics broad. But lactate keeps climbing. SBP only 92 with one pressor. Source control may be missing or the patient needs more.",
+        "vitals": {
+          "hr": "126 BPM",
+          "bp": "BP 92/56",
+          "spo2": "SpO2 93%"
+        },
+        "ecg_banner": "REFRACTORY SEPSIS . LACTATE TREND 4.2 -> 5.8"
+      },
+      {
+        "variant_id": "s3c_v2_fluid_overload",
+        "label": "Volume overload - new crackles",
+        "env_label": "Scenario 3-C . MICU . hour 4 . fluid problem",
+        "env_title": "4L in - new bibasilar crackles - BP still 88",
+        "env_meta": "4L resuscitation done. Lactate dropping but BP not recovering and now lungs are wet. Pressors needed. More fluid is no longer the answer.",
+        "vitals": {
+          "hr": "118 BPM",
+          "bp": "BP 88/54",
+          "spo2": "SpO2 89%"
+        },
+        "ecg_banner": "VOLUME OVERLOAD . PRESSORS REQUIRED"
+      },
+      {
+        "variant_id": "s3c_v3_aki_developing",
+        "label": "AKI developing under sepsis",
+        "env_label": "Scenario 3-C . MICU . renal complication",
+        "env_title": "Cr from 0.9 to 2.4 in 8 hours",
+        "env_meta": "Sepsis management going. But the kidneys are failing fast - oliguric, creatinine doubled, potassium climbing. Renal replacement therapy may be hours away.",
+        "vitals": {
+          "hr": "108 BPM",
+          "bp": "BP 102/62",
+          "spo2": "SpO2 95%"
+        },
+        "ecg_banner": "AKI . OLIGURIC . K+ 5.8 . CRRT CONSIDER"
+      }
     ],
     "s3c2": [
-      {"variant_id": "s3c2_v1_icu_escalation", "label": "ICU escalation under team friction", "env_label": "Scenario 3-C-2 . escalation decision . hour 4", "env_title": "Resident says wait - your gut says now", "env_meta": "You believe she needs ICU now. The covering resident wants to give 'one more hour' on the floor. Bed manager says ICU has one bed left for the night. Pick your move.", "vitals": {"hr": "122 BPM", "bp": "BP 90/56", "spo2": "SpO2 92%"}, "ecg_banner": "ESCALATION FRICTION . ICU BED LIMITED"},
-      {"variant_id": "s3c2_v2_rrt_call", "label": "Rapid response activation", "env_label": "Scenario 3-C-2 . RRT activation", "env_title": "Activate RRT or wait for primary team callback", "env_meta": "Primary team has not called back in 25 minutes. Patient is now meeting MEWS criteria. RRT activation will get help in 5 minutes but will burn political capital with the resident.", "vitals": {"hr": "128 BPM", "bp": "BP 86/52", "spo2": "SpO2 90%"}, "ecg_banner": "MEWS 7 . PRIMARY TEAM NON-RESPONSIVE . RRT THRESHOLD MET"},
-      {"variant_id": "s3c2_v3_handoff_at_shift", "label": "Deteriorating patient at shift change", "env_label": "Scenario 3-C-2 . shift change handover", "env_title": "You go off in 8 minutes - patient sliding", "env_meta": "Shift change in 8 minutes. The oncoming nurse has 6 patients including yours. Your patient is sliding. Do you escalate now or hand it off complete with the trend story?", "vitals": {"hr": "116 BPM", "bp": "BP 94/58", "spo2": "SpO2 92%"}, "ecg_banner": "SHIFT CHANGE . DETERIORATION TREND . HANDOVER QUALITY MATTERS"}
+      {
+        "variant_id": "s3c2_v1_post_arrest_processing",
+        "label": "Wellbeing check after near-arrest",
+        "env_label": "Scenario 3-C-2 . post-shift wellbeing check",
+        "env_title": "Charge: how are you doing - that was hard",
+        "env_meta": "The patient pulled through but it was a near miss. End of shift. The charge nurse pulls you aside: how are you doing - that was a hard one. Easy to deflect. Easy to suppress. The processing matters.",
+        "vitals": {},
+        "ecg_banner": "POST-EVENT WELLBEING CHECK . PROCESSING MATTERS"
+      },
+      {
+        "variant_id": "s3c2_v2_cumulative_week",
+        "label": "Wellbeing check after a hard week",
+        "env_label": "Scenario 3-C-2 . cumulative load check",
+        "env_title": "Charge: third bad shift in a row - check in",
+        "env_meta": "Third critical patient this week. Charge nurse stops you in the corridor: that is a lot - how are you. The honest answer is heavier than the script answer. What you say next sets the pattern for the next 12 months.",
+        "vitals": {},
+        "ecg_banner": "CUMULATIVE LOAD CHECK . MORAL WEIGHT"
+      },
+      {
+        "variant_id": "s3c2_v3_first_loss",
+        "label": "Wellbeing check after first patient loss",
+        "env_label": "Scenario 3-C-2 . post-loss processing",
+        "env_title": "Preceptor: it is okay to feel this",
+        "env_meta": "First patient you lost despite doing everything right. Preceptor finds you in the break room. There is space here. There is time. There is no right answer. There is only what is true.",
+        "vitals": {},
+        "ecg_banner": "FIRST LOSS PROCESSING . SAFE SPACE"
+      }
     ]
   }
 }
