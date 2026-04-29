@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIWIZN v6.3 Self-Test</title>
+<style>
+* {box-sizing:border-box}
+body {font:14px/1.55 -apple-system,BlinkMacSystemFont,sans-serif;margin:0;padding:32px;background:#F6F8FA;color:#0D2D47}
+.wrap {max-width:980px;margin:0 auto}
+h1 {font-family:Georgia,serif;font-weight:400;font-size:28px;margin:0 0 8px;color:#0D2D47}
+.sub {color:#6B7A8D;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:24px}
+.card {background:#fff;border-radius:12px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid #EAEDF1}
+.card h2 {margin:0 0 12px;font-size:16px;font-weight:600;color:#0D2D47}
+.test-row {display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #F0F2F5;font-family:'SF Mono',Consolas,monospace;font-size:13px}
+.test-row:last-child {border-bottom:none}
+.test-row .lbl {flex:1}
+.test-row .res {font-weight:700;padding:3px 10px;border-radius:5px;font-size:11px;letter-spacing:.04em}
+.pass {background:rgba(0,168,122,.12);color:#00A87A}
+.fail {background:rgba(220,38,38,.12);color:#DC2626}
+.warn {background:rgba(217,119,6,.15);color:#D97706}
+.pending {background:#EAEDF1;color:#6B7A8D}
+.summary {font-family:'JetBrains Mono',monospace;font-size:12px;padding:14px 18px;border-radius:10px;margin:8px 0 24px}
+.summary.all-pass {background:#ECFDF5;color:#00795B;border-left:4px solid #00A87A}
+.summary.has-fail {background:#FEF2F2;color:#B91C1C;border-left:4px solid #DC2626}
+iframe {width:100%;height:720px;border:1px solid #EAEDF1;border-radius:12px;margin-top:16px;background:#fff}
+.mini {font-size:11px;color:#6B7A8D;margin-top:4px}
+.foot {margin-top:32px;padding:14px 18px;background:#0D2D47;color:#A4C2D8;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-align:center}
+.foot strong{color:#00A87A;letter-spacing:.18em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>AIWIZN v6.3 Self-Test</h1>
+<div class="sub">FUNCTIONAL VERIFICATION OF LIVE APP</div>
+<div class="summary pending" id="summary">Running tests...</div>
+<div class="card"><h2>1 . Live files served</h2><div id="t1"></div></div>
+<div class="card"><h2>2 . JavaScript engines (loaded in iframe)</h2><div id="t2"></div></div>
+<div class="card"><h2>3 . Variant pool (scenarios.json)</h2><div id="t3"></div></div>
+<div class="card"><h2>4 . NCLEX mapping</h2><div id="t4"></div></div>
+<div class="card"><h2>5 . djb2 variant rotation</h2><div id="t5"></div></div>
+<div class="card"><h2>6 . End-to-end: Begin Session triggers s1a panel</h2><div id="t6"></div></div>
+<div class="card"><h2>Live app (iframe under test)</h2><iframe id="app" src="./?selftest=1"></iframe></div>
+<div class="foot"><strong>AIWIZN / ATEN INC 2026</strong> &nbsp; IMAGINATION UNLIMITED &nbsp; thomas@ateninc.com &nbsp; +1.919.341.8234</div>
+</div>
+<script>
+const BASE = '.';
+let results = [];
+function row(c, lbl, st, det) {
+  const el = document.createElement('div');
+  el.className = 'test-row';
+  const cls = st==='PASS'?'pass':st==='FAIL'?'fail':st==='WARN'?'warn':'pending';
+  el.innerHTML = '<div class="lbl">'+lbl+(det?' <span style="color:#6B7A8D">. '+det+'</span>':'')+'</div><div class="res '+cls+'">'+st+'</div>';
+  document.getElementById(c).appendChild(el);
+  results.push({lbl,st});
+}
+async function runTests() {
+  try {
+    const r = await fetch('./?t1', {cache:'no-store'});
+    const html = await r.text();
+    row('t1','index.html responds',r.ok?'PASS':'FAIL','HTTP '+r.status);
+    row('t1','File size > 400 KB',html.length>400000?'PASS':'FAIL',Math.round(html.length/1024)+' KB');
+    row('t1','No escaped backticks (broken JS)',!html.includes('\\`')?'PASS':'FAIL');
+    row('t1','BEGIN button present',html.includes('startSession()')?'PASS':'FAIL');
+    row('t1','ARIA briefing modal in HTML',html.includes('id="aria-briefing"')?'PASS':'FAIL');
+    row('t1','STEALTH PSYCHOMETRIC panel',html.includes('STEALTH PSYCHOMETRIC')?'PASS':'FAIL');
+    row('t1','LEARNING QUALITY panel',html.includes('LEARNING QUALITY')?'PASS':'FAIL');
+    row('t1','NCLEX engine code',html.includes('function buildNclexBadgeHTML')?'PASS':'FAIL');
+    row('t1','Variant engine code',html.includes('function pickVariant')?'PASS':'FAIL');
+    const allWired = ['s1a','s1b','s1c','s2a','s2b','s2c','s3a','s3b','s3c'].every(n=>html.includes('id="'+n+'-env-title"'));
+    row('t1','All 9 panels have env-title IDs',allWired?'PASS':'FAIL');
+  } catch(e) { row('t1','Fetch failed','FAIL',e.message); }
+
+  try {
+    const r = await fetch('./scenarios.json?t3', {cache:'no-store'});
+    const j = await r.json();
+    const total = Object.values(j.variants).reduce((a,b)=>a+b.length,0);
+    row('t3','Loads as JSON','PASS','version '+j._meta.version);
+    row('t3','Has 13 nodes',Object.keys(j.variants).length>=13?'PASS':'FAIL',Object.keys(j.variants).length+' nodes');
+    row('t3','>= 39 variants total',total>=39?'PASS':'FAIL',total+' variants');
+    row('t3','Each node >= 3 variants',Object.values(j.variants).every(v=>v.length>=3)?'PASS':'FAIL');
+    window._scen = j;
+  } catch(e) { row('t3','Failed to load','FAIL',e.message); }
+
+  try {
+    const r = await fetch('./nclex_mapping.json?t4', {cache:'no-store'});
+    const j = await r.json();
+    row('t4','Loads as JSON','PASS','version '+j._meta.version);
+    row('t4','13 nodes mapped',Object.keys(j.nodes).length===13?'PASS':'FAIL',Object.keys(j.nodes).length+' nodes');
+  } catch(e) { row('t4','Failed to load','FAIL',e.message); }
+
+  try {
+    function djb2(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return Math.abs(h);}
+    const pool = window._scen?.variants?.s1a || [];
+    const sessions = ['s_aaa','s_bbb','s_ccc','s_ddd'];
+    const seen = new Set();
+    sessions.forEach(s => seen.add(pool[djb2('s1a:'+s) % pool.length].variant_id));
+    row('t5','Pool loaded for s1a',pool.length>=3?'PASS':'FAIL',pool.length+' variants');
+    row('t5','Different sessions get different variants',seen.size>=2?'PASS':'FAIL',seen.size+' unique across 4 sessions');
+  } catch(e) { row('t5','djb2 sim failed','FAIL',e.message); }
+
+  setTimeout(async () => {
+    try {
+      const iframe = document.getElementById('app');
+      const win = iframe.contentWindow;
+      const doc = iframe.contentDocument;
+      if (!win || !doc) {
+        row('t2','iframe accessible','FAIL','blocked');
+        return;
+      }
+      const fns = ['startSession','go','pickVariant','applyVariant','openAriaBriefing','recordAriaFeedback','buildNclexBadgeHTML','renderAllNclexBadges','computeNWI'];
+      fns.forEach(n => {
+        const t = typeof win[n];
+        row('t2', n, t==='function'?'PASS':'FAIL', t);
+      });
+
+      const beginBtn = Array.from(doc.querySelectorAll('button')).find(b => /begin/i.test(b.textContent) && (b.getAttribute('onclick')||'').includes('startSession'));
+      if (beginBtn) {
+        row('t6','Begin button located','PASS',beginBtn.textContent.trim().substring(0,40));
+        beginBtn.click();
+        await new Promise(r => setTimeout(r, 1500));
+        const active = doc.querySelector('.panel.active');
+        row('t6','Session started (panel active)',active?'PASS':'FAIL',active?.id||'none');
+        row('t6','S.nurse populated',win.S?.nurse?'PASS':'FAIL',win.S?.nurse||'undef');
+        row('t6','S.id assigned',win.S?.id?'PASS':'FAIL',String(win.S?.id||'').substring(0,16));
+        row('t6','Variants loaded async',win.AIWIZN_VARIANTS?'PASS':'WARN',win.AIWIZN_VARIANTS?'yes':'still fetching');
+        row('t6','NCLEX map loaded async',win.NCLEX_MAP?'PASS':'WARN',win.NCLEX_MAP?'yes':'still fetching');
+        const briefing = doc.getElementById('aria-briefing');
+        row('t6','ARIA briefing modal in iframe',briefing?'PASS':'FAIL');
+        const badges = doc.querySelectorAll('.nclex-badge');
+        row('t6','NCLEX badges rendered',badges.length>=1?'PASS':'WARN',badges.length+' badges');
+        const envTitle = doc.getElementById('s1a-env-title');
+        row('t6','s1a-env-title rendered',envTitle?'PASS':'FAIL',envTitle?.textContent?.substring(0,40)||'');
+      } else {
+        row('t6','Begin button located','FAIL','not found in DOM');
+      }
+
+      const fails = results.filter(r=>r.st==='FAIL').length;
+      const warns = results.filter(r=>r.st==='WARN').length;
+      const passes = results.filter(r=>r.st==='PASS').length;
+      const sumEl = document.getElementById('summary');
+      if (fails===0) {
+        sumEl.className='summary all-pass';
+        sumEl.textContent='OK . ALL TESTS PASS . '+passes+' passed, '+warns+' warnings, 0 failures';
+      } else {
+        sumEl.className='summary has-fail';
+        sumEl.textContent='X . '+fails+' FAILURES . '+passes+' passed, '+warns+' warnings, '+fails+' failures';
+      }
+    } catch(e) {
+      row('t6','iframe inspection failed','FAIL',e.message);
+      const sumEl = document.getElementById('summary');
+      sumEl.className='summary has-fail';
+      sumEl.textContent='X . Harness error: '+e.message;
+    }
+  }, 5000);
+}
+runTests();
+</script>
+</body>
+</html>
