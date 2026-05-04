@@ -3069,7 +3069,7 @@ const DLS = {
 };
 
 // ── SESSION ───────────────────────────────────
-let S = DB.get('aiwizn_curr') || {
+var S = DB.get('aiwizn_curr') || {
   id: Date.now(), nurse:'Demo', unit:'',
   start: new Date().toISOString(),
   choices:{}, reflection:'', done:false
