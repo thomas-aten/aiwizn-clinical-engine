@@ -71,7 +71,33 @@ h3{font-size:14px;color:#0D2D47;margin:24px 0 12px;font-family:JetBrains Mono,mo
 .empty,.loading{padding:60px 24px;text-align:center;color:#6B7A8D}
 .foot{margin-top:48px;padding:20px;background:#0D2D47;color:#A4C2D8;text-align:center;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.1em;line-height:1.8}
 .foot strong{color:#00C896;letter-spacing:.18em}
-@media (max-width:640px){.dom-row{grid-template-columns:130px 1fr 50px;gap:8px}.dom-lbl{font-size:12px}table{font-size:12px}thead th,tbody td{padding:10px 8px}h1{font-size:24px}.wrap{padding:16px}.gate-card{padding:28px 22px}}
+/* PERSONA NARRATIVE */
+.persona-hero{background:linear-gradient(135deg,#0D2D47 0%,#1a4570 100%);color:#fff;padding:28px 28px 24px;border-radius:12px;margin-bottom:16px;position:relative;overflow:hidden}
+.persona-hero::before{content:"";position:absolute;top:-30%;right:-15%;width:300px;height:300px;background:radial-gradient(circle,rgba(0,200,150,.15) 0%,transparent 70%);pointer-events:none}
+.persona-hero h2{font-family:Georgia,serif;font-size:30px;font-weight:400;margin-bottom:6px;color:#fff;position:relative;z-index:1}
+.persona-hero .ph-stage{font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.16em;color:#00C896;text-transform:uppercase;margin-bottom:18px}
+.persona-hero .ph-nwi{display:flex;align-items:baseline;gap:8px;margin-bottom:18px}
+.persona-hero .ph-nwi-num{font-family:Georgia,serif;font-size:64px;line-height:1;font-weight:300;color:#fff}
+.persona-hero .ph-nwi-lbl{font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.14em;color:#A4C2D8;text-transform:uppercase}
+.ph-pills{display:flex;gap:8px;flex-wrap:wrap}
+.ph-pill{background:rgba(255,255,255,.12);color:#fff;padding:5px 12px;border-radius:5px;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.08em;font-weight:700}
+.narrative-section{padding:22px 28px}
+.narrative-section h3{margin-top:0;margin-bottom:14px}
+.narrative-text{font-family:Georgia,serif;font-size:16px;line-height:1.7;color:#2D3A4A;margin-bottom:16px}
+.narrative-text strong{color:#0D2D47}
+.dom-insight{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #F0F2F5}
+.dom-insight:last-child{border-bottom:none}
+.dom-insight-icon{flex-shrink:0;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;color:#fff}
+.dom-insight-icon.green{background:#00A87A}
+.dom-insight-icon.amber{background:#D97706}
+.dom-insight-icon.red{background:#DC2626}
+.dom-insight-body{flex:1}
+.dom-insight-title{font-weight:700;color:#0D2D47;font-size:13px;margin-bottom:2px}
+.dom-insight-text{color:#4A5A70;font-size:13px;line-height:1.5}
+.recommendation{background:#F6FAF8;border-left:3px solid #00A87A;padding:14px 18px;border-radius:6px;margin-bottom:10px}
+.recommendation-h{font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.14em;color:#00795B;text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.recommendation-t{color:#2D3A4A;font-size:14px;line-height:1.55}
+@media (max-width:640px){.dom-row{grid-template-columns:130px 1fr 50px;gap:8px}.dom-lbl{font-size:12px}table{font-size:12px}thead th,tbody td{padding:10px 8px}h1{font-size:24px}.wrap{padding:16px}.gate-card{padding:28px 22px}.persona-hero .ph-nwi-num{font-size:48px}.persona-hero h2{font-size:24px}}
 </style>
 </head>
 <body>
@@ -172,6 +198,14 @@ function pillCls(nwi) {
   return "pill red";
 }
 
+function bennerStage(nwi) {
+  if (nwi >= 85) return "Expert";
+  if (nwi >= 70) return "Proficient";
+  if (nwi >= 55) return "Competent";
+  if (nwi >= 40) return "Advanced Beginner";
+  return "Novice";
+}
+
 function renderList() {
   const rows = CACHE || [];
   if (!rows.length) {
@@ -198,7 +232,6 @@ function renderList() {
     "<div class=tile><div class=tile-num>" + avg + "%</div><div class=tile-lbl>Average NWI</div></div>" +
     "<div class=tile><div class=tile-num>" + expert + "</div><div class=tile-lbl>Expert Sessions</div></div>";
 
-  // Store users array globally so click handlers can look up by index
   window._USERS = users;
   document.getElementById("users-body").innerHTML = users.map((u, i) => {
     const r = u.latest;
@@ -209,6 +242,102 @@ function renderList() {
   }).join("");
 }
 
+// Domain insights - what each score means and how to develop it
+const DOMAIN_DEFS = {
+  d1_ambiguity:     {label:"Ambiguity Tolerance",     strength:"holds steady when the picture is incomplete",          dev:"practice naming what you do not yet know before acting"},
+  d2_communication: {label:"Therapeutic Communication",strength:"reads the room and meets people where they are",       dev:"rehearse SBAR opens that include emotion as data"},
+  d3_ethics:        {label:"Ethical Reasoning",        strength:"sees the moral dimension when others see only logistics",dev:"talk through one ethics case per week with a peer"},
+  d4_psych_safety:  {label:"Psychological Safety",     strength:"speaks up when the stakes outrank the hierarchy",       dev:"practice graded assertion - CUS, then escalate"},
+  d5_deterioration: {label:"Deterioration Recognition",strength:"catches the trend before the alarm catches it",         dev:"trend-check the chart twice per shift, not vitals once"},
+  d6_pharmacology:  {label:"Pharmacology Judgment",    strength:"thinks cause-and-effect not just protocol",             dev:"build a personal pocket-list of contraindication red flags"},
+  d7_sbar:          {label:"SBAR / Handover",          strength:"lands the receiver in the same mental model as you",    dev:"end every SBAR with the explicit ask, not the data"},
+  d8_priority:      {label:"Prioritisation",           strength:"chooses the right next thing under competing demands",  dev:"say the priority out loud before doing it - to no one"},
+  d9_culture:       {label:"Cultural Humility",        strength:"asks instead of assumes, even under time pressure",     dev:"swap one assumption per shift for a question"},
+  d11_social:       {label:"Social Complexity",        strength:"factors housing, family, money into the clinical plan", dev:"add SDoH to your standard discharge mental checklist"},
+  d12_moral:        {label:"Moral Resilience",         strength:"recovers from morally injurious shifts without numbing",dev:"name the injury, then debrief - do not stockpile"}
+};
+
+function buildPersonaNarrative(latest) {
+  const nwi = latest.nwi_pct || 0;
+  const stage = bennerStage(nwi);
+  const total = latest.total_nodes || 0;
+  const exp = latest.expert_count || 0;
+  const gap = latest.gap_count || 0;
+  const mid = latest.mid_count || 0;
+  // Pick top strengths and gaps
+  const dKeys = Object.keys(DOMAIN_DEFS);
+  const scored = dKeys.map(k => ({ k, v: latest[k] || 0 })).filter(x => x.v > 0);
+  const strengths = scored.filter(x => x.v >= 75).sort((a,b) => b.v - a.v);
+  const gaps = scored.filter(x => x.v < 55).sort((a,b) => a.v - b.v);
+  const mids = scored.filter(x => x.v >= 55 && x.v < 75);
+
+  // OPEN NARRATIVE
+  let narr = "<strong>" + stage + " practitioner</strong> with an NWI of <strong>" + nwi + "%</strong> across " + total + " decision nodes - ";
+  narr += exp + " expert-tier, " + mid + " mid-tier, " + gap + " gap-tier choices.";
+  if (strengths.length && gaps.length) {
+    narr += " The signal is mixed: strong in <strong>" + strengths.slice(0,2).map(s => DOMAIN_DEFS[s.k].label).join(" and ") + "</strong>, but trailing on <strong>" + gaps.slice(0,2).map(g => DOMAIN_DEFS[g.k].label).join(" and ") + "</strong>.";
+  } else if (strengths.length) {
+    narr += " The pattern is consistently strong - this is not a fluke session.";
+  } else if (gaps.length) {
+    narr += " The pattern points to underdeveloped clinical judgement that targeted practice will move quickly.";
+  }
+  // Velocity flag
+  if ((latest.rapid_clicks || 0) >= 4) {
+    narr += " <strong>Velocity flag:</strong> " + latest.rapid_clicks + " rapid clicks suggest some decisions were made faster than the data warranted - slowing down is the highest-leverage development habit.";
+  }
+  if ((latest.self_corrections || 0) >= 3) {
+    narr += " <strong>Self-correction signal:</strong> " + latest.self_corrections + " revisions show metacognitive awareness - this is a strength under pressure.";
+  }
+  return narr;
+}
+
+function buildStrengthsBlock(latest) {
+  const dKeys = Object.keys(DOMAIN_DEFS);
+  const strengths = dKeys.map(k => ({ k, v: latest[k] || 0 })).filter(x => x.v >= 75).sort((a,b) => b.v - a.v);
+  if (!strengths.length) return "<div class='dom-insight'><div class='dom-insight-body'><div class='dom-insight-text'>No domains scored above 75% in the latest session. Returning to gap practice will lift several at once.</div></div></div>";
+  return strengths.map(s => {
+    const d = DOMAIN_DEFS[s.k];
+    return "<div class='dom-insight'><div class='dom-insight-icon green'>" + s.v + "</div><div class='dom-insight-body'><div class='dom-insight-title'>" + d.label + "</div><div class='dom-insight-text'>" + d.strength + "</div></div></div>";
+  }).join("");
+}
+
+function buildDevelopmentBlock(latest) {
+  const dKeys = Object.keys(DOMAIN_DEFS);
+  const gaps = dKeys.map(k => ({ k, v: latest[k] || 0 })).filter(x => x.v > 0 && x.v < 55).sort((a,b) => a.v - b.v);
+  if (!gaps.length) return "<div class='dom-insight'><div class='dom-insight-body'><div class='dom-insight-text'>No domains scored below 55% in the latest session. Focus development on the mid-tier domains to consolidate gains.</div></div></div>";
+  return gaps.map(g => {
+    const d = DOMAIN_DEFS[g.k];
+    return "<div class='dom-insight'><div class='dom-insight-icon red'>" + g.v + "</div><div class='dom-insight-body'><div class='dom-insight-title'>" + d.label + "</div><div class='dom-insight-text'>" + d.dev + "</div></div></div>";
+  }).join("");
+}
+
+function buildContinuumBlock(latest, totalSessions) {
+  const nwi = latest.nwi_pct || 0;
+  const recs = [];
+  // 30-day recommendation
+  if (nwi < 55) {
+    recs.push({h:"NEXT 30 DAYS - FOUNDATION", t:"Re-run the full assessment after a 1:1 case-review with a Charge or Clinical Educator. The gap pattern is foundational, not advanced - rushing to retest before practice will not move the score."});
+  } else if (nwi < 75) {
+    recs.push({h:"NEXT 30 DAYS - CONSOLIDATION", t:"Three targeted shadow shifts on the two weakest domains, then retest. Mid-tier scores move fastest with deliberate practice on the specific decision points missed."});
+  } else {
+    recs.push({h:"NEXT 30 DAYS - LEADERSHIP TRACK", t:"This nurse is ready to mentor others. Pair with one Advanced Beginner colleague for case-review pairings - teaching is the strongest consolidation move at this tier."});
+  }
+  // 90-day recommendation
+  if ((latest.aria_engagements || 0) < 3) {
+    recs.push({h:"NEXT 90 DAYS - REFLECTIVE PRACTICE", t:"ARIA engagement was low this session (" + (latest.aria_engagements || 0) + "). Encourage active engagement with the virtual mentor prompts during retests - reflective pause is where clinical judgement is built."});
+  } else {
+    recs.push({h:"NEXT 90 DAYS - REFLECTIVE DEPTH", t:"ARIA engagement is healthy. The next-level move is a journal entry after each shift naming one decision they would change and one they would repeat."});
+  }
+  // Retest recommendation based on session count
+  if (totalSessions === 1) {
+    recs.push({h:"RETEST CADENCE", t:"Schedule the second AIWIZN session in 30-45 days. A single session is a snapshot; a second session establishes the trend that matters for promotion or development decisions."});
+  } else if (totalSessions >= 2) {
+    const trend = (latest.nwi_pct - (latest.retest_vs_s3a === "improved" ? -10 : 0));
+    recs.push({h:"RETEST CADENCE", t:totalSessions + " sessions on file. Continue the quarterly cadence to track development trajectory. Look for consistent gains in the same domain over 3+ sessions before declaring growth."});
+  }
+  return recs.map(r => "<div class='recommendation'><div class='recommendation-h'>" + r.h + "</div><div class='recommendation-t'>" + r.t + "</div></div>").join("");
+}
+
 function showDetail(idx) {
   const u = window._USERS[idx];
   if (!u) return;
@@ -217,17 +346,48 @@ function showDetail(idx) {
   const avg = Math.round(us.reduce((a, b) => a + (b.nwi_pct || 0), 0) / total);
   const best = Math.max.apply(null, us.map(s => s.nwi_pct || 0));
   const trend = us.length > 1 ? (us[0].nwi_pct - us[us.length - 1].nwi_pct) : 0;
+  const stage = bennerStage(latest.nwi_pct || 0);
   const doms = ["d1_ambiguity","d2_communication","d3_ethics","d4_psych_safety","d5_deterioration","d6_pharmacology","d7_sbar","d8_priority","d9_culture","d11_social","d12_moral"];
   const dlbl = {d1_ambiguity:"D1 Ambiguity",d2_communication:"D2 Therapeutic Comm",d3_ethics:"D3 Ethics",d4_psych_safety:"D4 Psych Safety",d5_deterioration:"D5 Deterioration",d6_pharmacology:"D6 Pharmacology",d7_sbar:"D7 SBAR",d8_priority:"D8 Prioritisation",d9_culture:"D9 Cultural Humility",d11_social:"D11 Social Complexity",d12_moral:"D12 Moral Resilience"};
 
   let h = "<div class=detail-head><div><h2>" + u.nurse_name + "</h2><div class=meta>" + (latest.unit || "Unit not specified") + " &middot; " + total + " session" + (total === 1 ? "" : "s") + "</div></div><button class=back-btn onclick=hideDetail()>&larr; Back</button></div>";
-  h += "<div class=tiles>";
-  h += "<div class=tile><div class=tile-num>" + (latest.nwi_pct || 0) + "%</div><div class=tile-lbl>Latest NWI</div></div>";
-  h += "<div class=tile><div class=tile-num>" + avg + "%</div><div class=tile-lbl>Average</div></div>";
-  h += "<div class=tile><div class=tile-num>" + best + "%</div><div class=tile-lbl>Best</div></div>";
-  h += "<div class=tile><div class=tile-num>" + (trend > 0 ? "+" : "") + trend + "pt</div><div class=tile-lbl>Trend</div></div>";
+  
+  // PERSONA HERO BANNER
+  h += "<div class=persona-hero>";
+  h += "<h2>" + u.nurse_name + "</h2>";
+  h += "<div class=ph-stage>" + stage.toUpperCase() + " PRACTITIONER &middot; " + (latest.unit || "Unit not specified") + "</div>";
+  h += "<div class=ph-nwi><span class=ph-nwi-num>" + (latest.nwi_pct || 0) + "%</span><span class=ph-nwi-lbl>NURSING WISDOM INDEX</span></div>";
+  h += "<div class=ph-pills>";
+  h += "<span class=ph-pill>" + (latest.expert_count || 0) + " Expert</span>";
+  h += "<span class=ph-pill>" + (latest.mid_count || 0) + " Mid</span>";
+  h += "<span class=ph-pill>" + (latest.gap_count || 0) + " Gap</span>";
+  h += "<span class=ph-pill>" + (latest.total_nodes || 0) + " Nodes</span>";
+  h += "<span class=ph-pill>" + (latest.total_revisions || 0) + " Revisions</span>";
   h += "</div>";
-  h += "<div class=card><div class=card-head><h2>Latest Session - Domain Breakdown</h2></div><div style='padding:20px'><div class=dom-grid>";
+  h += "</div>";
+
+  // PERSONA NARRATIVE
+  h += "<div class=card><div class=card-head><h2>Persona Narrative</h2></div><div class=narrative-section><div class=narrative-text>" + buildPersonaNarrative(latest) + "</div></div></div>";
+
+  // SUMMARY TILES
+  h += "<div class=tiles>";
+  h += "<div class=tile><div class=tile-num>" + avg + "%</div><div class=tile-lbl>Average NWI</div></div>";
+  h += "<div class=tile><div class=tile-num>" + best + "%</div><div class=tile-lbl>Best Session</div></div>";
+  h += "<div class=tile><div class=tile-num>" + (trend > 0 ? "+" : "") + trend + "pt</div><div class=tile-lbl>Trend</div></div>";
+  h += "<div class=tile><div class=tile-num>" + total + "</div><div class=tile-lbl>Sessions Logged</div></div>";
+  h += "</div>";
+
+  // STRENGTHS
+  h += "<div class=card><div class=card-head><h2>Strengths</h2></div><div class=narrative-section>" + buildStrengthsBlock(latest) + "</div></div>";
+
+  // DEVELOPMENT FOCUS
+  h += "<div class=card><div class=card-head><h2>Development Focus</h2></div><div class=narrative-section>" + buildDevelopmentBlock(latest) + "</div></div>";
+
+  // CONTINUUM RECOMMENDATIONS
+  h += "<div class=card><div class=card-head><h2>Continuum &middot; Development Plan</h2></div><div class=narrative-section>" + buildContinuumBlock(latest, total) + "</div></div>";
+
+  // FULL DOMAIN BREAKDOWN (data view)
+  h += "<div class=card><div class=card-head><h2>Latest Session - All Domains</h2></div><div style='padding:20px'><div class=dom-grid>";
   doms.forEach(d => {
     const v = latest[d];
     if (v == null) return;
@@ -235,6 +395,8 @@ function showDetail(idx) {
     h += "<div class=dom-row><div class=dom-lbl>" + dlbl[d] + "</div><div class=dom-bar><div class='dom-fill " + c + "' style='width:" + v + "%'></div></div><div class=dom-num>" + v + "%</div></div>";
   });
   h += "</div></div></div>";
+
+  // COGNITA BEHAVIORAL
   h += "<div class=card><div class=card-head><h2>COGNITA Behavioral Metrics</h2></div><div style='padding:20px'><div class=cog-grid>";
   h += "<div class=cog-cell><div class=cog-num>" + (latest.avg_decision_s || "-") + "s</div><div class=cog-lbl>Avg Decision</div></div>";
   h += "<div class=cog-cell><div class=cog-num>" + (latest.rapid_clicks || 0) + "</div><div class=cog-lbl>Rapid Clicks</div></div>";
@@ -245,6 +407,8 @@ function showDetail(idx) {
   h += "<div class=cog-cell><div class=cog-num>" + (latest.position_bias_a != null ? latest.position_bias_a + "%" : "-") + "</div><div class=cog-lbl>Position Bias A</div></div>";
   h += "<div class=cog-cell><div class=cog-num>" + (latest.confirmed_gaps || 0) + "</div><div class=cog-lbl>Confirmed Gaps</div></div>";
   h += "</div></div></div>";
+
+  // SESSION HISTORY
   h += "<div class=card><div class=card-head><h2>Session History (" + total + ")</h2></div><div style='overflow-x:auto'><table><thead><tr><th>Date</th><th>NWI</th><th>Expert/Total</th><th>Avg Time</th><th>ARIA</th></tr></thead><tbody>";
   us.forEach(s => {
     const dt = new Date(s.session_started).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
@@ -252,9 +416,11 @@ function showDetail(idx) {
     h += "<tr><td>" + dt + "</td><td><span class='" + c + "'>" + (s.nwi_pct || 0) + "%</span></td><td>" + (s.expert_count || 0) + "/" + (s.total_nodes || 0) + "</td><td>" + (s.avg_decision_s || "-") + "s</td><td>" + (s.aria_engagements || 0) + "</td></tr>";
   });
   h += "</tbody></table></div></div>";
+  
   if (latest.reflection) {
     h += "<div class=card><div class=card-head><h2>Latest Reflection</h2></div><div style='padding:20px'><div class=refl-box>" + latest.reflection.replace(/</g, "&lt;") + "</div></div></div>";
   }
+  
   document.getElementById("detail-body").innerHTML = h;
   document.getElementById("list-view").classList.add("hidden");
   document.getElementById("detail-view").classList.add("active");
