@@ -25,7 +25,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,Inter,sans-serif;background:#F
 .brand-strip .logo{font-size:22px;font-weight:700;letter-spacing:.14em}
 .brand-strip .tagline{font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.18em;color:#00C896;text-transform:uppercase}
 .lock-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:#A4C2D8;padding:6px 12px;border-radius:5px;font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.12em;cursor:pointer;text-transform:uppercase}
-.lock-btn:hover{color:#fff;border-color:#fff}
 .wrap{max-width:1200px;margin:0 auto;padding:24px}
 h1{font-family:Georgia,serif;font-size:32px;font-weight:400;color:#0D2D47;margin-bottom:4px}
 .sub{color:#6B7A8D;font-family:JetBrains Mono,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:24px}
@@ -85,7 +84,7 @@ h3{font-size:14px;color:#0D2D47;margin:24px 0 12px;font-family:JetBrains Mono,mo
 <input type="password" class="gate-input" id="gate-input" placeholder="Access passphrase" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')tryUnlock()">
 <button class="gate-btn" onclick="tryUnlock()">Unlock Dashboard</button>
 <div class="gate-err" id="gate-err"></div>
-<div class="gate-foot">AIWIZN / ATEN INC 2026 . Private &amp; Confidential<br>Thomas@ateninc.com . +1.919.341.8234</div>
+<div class="gate-foot">AIWIZN / ATEN INC 2026 &middot; Private &amp; Confidential<br>Thomas@ateninc.com &middot; +1.919.341.8234</div>
 </div>
 </div>
 <div class="app" id="app">
@@ -95,7 +94,7 @@ h3{font-size:14px;color:#0D2D47;margin:24px 0 12px;font-family:JetBrains Mono,mo
 </div>
 <div class="wrap">
 <h1>Nurse Performance Review</h1>
-<div class="sub">All sessions saved to Supabase . live data</div>
+<div class="sub">All sessions saved to Supabase &middot; live data</div>
 <div id="list-view" class="list-view">
 <div class="tiles" id="tiles"><div class="loading">Loading...</div></div>
 <div class="card">
@@ -106,22 +105,167 @@ h3{font-size:14px;color:#0D2D47;margin:24px 0 12px;font-family:JetBrains Mono,mo
 </div></div></div>
 <div id="detail-view" class="detail-view"><div id="detail-body"></div></div>
 </div>
-<div class="foot"><strong>AIWIZN / ATEN INC 2026</strong> . IMAGINATION UNLIMITED<br>Thomas@ateninc.com . +1.919.341.8234 . Private &amp; Confidential</div>
+<div class="foot"><strong>AIWIZN / ATEN INC 2026</strong> &middot; IMAGINATION UNLIMITED<br>Thomas@ateninc.com &middot; +1.919.341.8234 &middot; Private &amp; Confidential</div>
 </div>
 <script>
-const ACCESS_HASH='65cd964343ae1903e8bf0750070a32434943b54b8e98e15e1613881dd2f549c1';
-async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-async function tryUnlock(){const i=document.getElementById('gate-input').value;const e=document.getElementById('gate-err');e.textContent='';if(!i){e.textContent='Enter passphrase';return;}const h=await sha256(i);if(h===ACCESS_HASH){sessionStorage.setItem('aiwizn_admin_unlocked','1');unlock();}else{e.textContent='Incorrect passphrase';document.getElementById('gate-input').value='';}}
-function unlock(){document.getElementById('gate').style.display='none';document.getElementById('app').classList.add('unlocked');loadAll(true);}
-function lock(){sessionStorage.removeItem('aiwizn_admin_unlocked');document.getElementById('gate').style.display='flex';document.getElementById('app').classList.remove('unlocked');document.getElementById('gate-input').value='';CACHE=null;}
-if(sessionStorage.getItem('aiwizn_admin_unlocked')==='1')unlock();
-const SB='https://scyfldezhztapttcyenr.supabase.co';
-const KEY='sb_publishable_XVqZASfCKdWY-lOwnJOgvw_KN2nunZ5';
-let CACHE=null;
-async function loadAll(force){if(CACHE&&!force)return CACHE;try{const r=await fetch(SB+'/rest/v1/prototype_sessions?select=*&order=session_started.desc&limit=500',{headers:{apikey:KEY,Authorization:'Bearer '+KEY}});if(!r.ok)throw new Error('HTTP '+r.status);CACHE=await r.json();renderList();return CACHE;}catch(e){document.getElementById('users-body').innerHTML='<tr><td colspan="7" class="empty">Could not load: '+e.message+'</td></tr>';return [];}}
-function renderList(){const rows=CACHE||[];if(!rows.length){document.getElementById('tiles').innerHTML='<div class="empty">No sessions yet.</div>';document.getElementById('users-body').innerHTML='<tr><td colspan="7" class="empty">No sessions saved yet.</td></tr>';return;}const userMap={};rows.forEach(r=>{const key=(r.nurse_name||'(unknown)')+'::'+(r.unit||'');if(!userMap[key])userMap[key]={nurse_name:r.nurse_name||'(unknown)',unit:r.unit||'-',sessions:[],latest:null};userMap[key].sessions.push(r);if(!userMap[key].latest||new Date(r.session_started)>new Date(userMap[key].latest.session_started))userMap[key].latest=r;});const users=Object.values(userMap).sort((a,b)=>new Date(b.latest.session_started)-new Date(a.latest.session_started));const total=rows.length;const uniq=users.length;const avg=Math.round(rows.reduce((a,b)=>a+(b.nwi_pct||0),0)/Math.max(1,rows.length));const expert=rows.filter(r=>r.nwi_pct>=70).length;document.getElementById('tiles').innerHTML='<div class="tile"><div class="tile-num">'+uniq+'</div><div class="tile-lbl">Unique Nurses</div></div><div class="tile"><div class="tile-num">'+total+'</div><div class="tile-lbl">Total Sessions</div></div><div class="tile"><div class="tile-num">'+avg+'%</div><div class="tile-lbl">Average NWI</div></div><div class="tile"><div class="tile-num">'+expert+'</div><div class="tile-lbl">Expert Sessions</div></div>';document.getElementById('users-body').innerHTML=users.map(u=>{const r=u.latest;const nwi=r.nwi_pct||0;const cls=nwi>=75?'pill green':nwi>=55?'pill amber':'pill red';const date=new Date(r.session_started).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});const escName=String(u.nurse_name).replace(/'/g,"\\'");return '<tr onclick="showDetail(\\''+escName+'\\')"><td><strong>'+u.nurse_name+'</strong></td><td>'+u.unit+'</td><td>'+u.sessions.length+'</td><td><span class="'+cls+'">'+nwi+'%</span></td><td>'+(r.expert_count||0)+' / '+(r.total_nodes||0)+'</td><td>'+date+'</td><td><button class="review-btn">Review &rarr;</button></td></tr>';}).join('');}
-function showDetail(n){const us=(CACHE||[]).filter(r=>r.nurse_name===n);if(!us.length){alert('No sessions for '+n);return;}const latest=us[0],total=us.length;const avg=Math.round(us.reduce((a,b)=>a+(b.nwi_pct||0),0)/total);const best=Math.max(...us.map(s=>s.nwi_pct||0));const trend=us.length>1?(us[0].nwi_pct-us[us.length-1].nwi_pct):0;const doms=['d1_ambiguity','d2_communication','d3_ethics','d4_psych_safety','d5_deterioration','d6_pharmacology','d7_sbar','d8_priority','d9_culture','d11_social','d12_moral'];const dlbl={d1_ambiguity:'D1 Ambiguity',d2_communication:'D2 Therapeutic Comm',d3_ethics:'D3 Ethics',d4_psych_safety:'D4 Psych Safety',d5_deterioration:'D5 Deterioration',d6_pharmacology:'D6 Pharmacology',d7_sbar:'D7 SBAR',d8_priority:'D8 Prioritisation',d9_culture:'D9 Cultural Humility',d11_social:'D11 Social Complexity',d12_moral:'D12 Moral Resilience'};let h='<div class="detail-head"><div><h2>'+n+'</h2><div class="meta">'+(latest.unit||'Unit not specified')+' . '+total+' session'+(total===1?'':'s')+'</div></div><button class="back-btn" onclick="hideDetail()">&larr; Back</button></div>';h+='<div class="tiles"><div class="tile"><div class="tile-num">'+(latest.nwi_pct||0)+'%</div><div class="tile-lbl">Latest NWI</div></div><div class="tile"><div class="tile-num">'+avg+'%</div><div class="tile-lbl">Average</div></div><div class="tile"><div class="tile-num">'+best+'%</div><div class="tile-lbl">Best</div></div><div class="tile"><div class="tile-num">'+(trend>0?'+':'')+trend+'pt</div><div class="tile-lbl">Trend</div></div></div>';h+='<div class="card"><div class="card-head"><h2>Latest Session - Domain Breakdown</h2></div><div style="padding:20px"><div class="dom-grid">';doms.forEach(d=>{const v=latest[d];if(v==null)return;const c=v>=75?'green':v>=55?'amber':'red';h+='<div class="dom-row"><div class="dom-lbl">'+dlbl[d]+'</div><div class="dom-bar"><div class="dom-fill '+c+'" style="width:'+v+'%"></div></div><div class="dom-num">'+v+'%</div></div>';});h+='</div></div></div>';h+='<div class="card"><div class="card-head"><h2>COGNITA Behavioral Metrics</h2></div><div style="padding:20px"><div class="cog-grid">';h+='<div class="cog-cell"><div class="cog-num">'+(latest.avg_decision_s||'-')+'s</div><div class="cog-lbl">Avg Decision</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.rapid_clicks||0)+'</div><div class="cog-lbl">Rapid Clicks</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.backtracks||0)+'</div><div class="cog-lbl">Backtracks</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.self_corrections||0)+'</div><div class="cog-lbl">Self-Corrections</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.total_revisions||0)+'</div><div class="cog-lbl">Revisions</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.aria_engagements||0)+'</div><div class="cog-lbl">ARIA Use</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.position_bias_a!=null?latest.position_bias_a+'%':'-')+'</div><div class="cog-lbl">Position Bias A</div></div>';h+='<div class="cog-cell"><div class="cog-num">'+(latest.confirmed_gaps||0)+'</div><div class="cog-lbl">Confirmed Gaps</div></div>';h+='</div></div></div>';h+='<div class="card"><div class="card-head"><h2>Session History ('+total+')</h2></div><div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>NWI</th><th>Expert/Total</th><th>Avg Time</th><th>ARIA</th></tr></thead><tbody>';us.forEach(s=>{const dt=new Date(s.session_started).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});const c=s.nwi_pct>=75?'pill green':s.nwi_pct>=55?'pill amber':'pill red';h+='<tr><td>'+dt+'</td><td><span class="'+c+'">'+(s.nwi_pct||0)+'%</span></td><td>'+(s.expert_count||0)+'/'+(s.total_nodes||0)+'</td><td>'+(s.avg_decision_s||'-')+'s</td><td>'+(s.aria_engagements||0)+'</td></tr>';});h+='</tbody></table></div></div>';if(latest.reflection)h+='<div class="card"><div class="card-head"><h2>Latest Reflection</h2></div><div style="padding:20px"><div class="refl-box">'+latest.reflection.replace(/</g,'&lt;')+'</div></div></div>';document.getElementById('detail-body').innerHTML=h;document.getElementById('list-view').classList.add('hidden');document.getElementById('detail-view').classList.add('active');window.scrollTo(0,0);}
-function hideDetail(){document.getElementById('list-view').classList.remove('hidden');document.getElementById('detail-view').classList.remove('active');window.scrollTo(0,0);}
+const ACCESS_HASH = "65cd964343ae1903e8bf0750070a32434943b54b8e98e15e1613881dd2f549c1";
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
+async function tryUnlock() {
+  const input = document.getElementById("gate-input").value;
+  const errEl = document.getElementById("gate-err");
+  errEl.textContent = "";
+  if (!input) { errEl.textContent = "Enter passphrase"; return; }
+  const hash = await sha256(input);
+  if (hash === ACCESS_HASH) {
+    sessionStorage.setItem("aiwizn_admin_unlocked", "1");
+    unlock();
+  } else {
+    errEl.textContent = "Incorrect passphrase";
+    document.getElementById("gate-input").value = "";
+  }
+}
+
+function unlock() {
+  document.getElementById("gate").style.display = "none";
+  document.getElementById("app").classList.add("unlocked");
+  loadAll(true);
+}
+
+function lock() {
+  sessionStorage.removeItem("aiwizn_admin_unlocked");
+  document.getElementById("gate").style.display = "flex";
+  document.getElementById("app").classList.remove("unlocked");
+  document.getElementById("gate-input").value = "";
+  CACHE = null;
+}
+
+if (sessionStorage.getItem("aiwizn_admin_unlocked") === "1") unlock();
+
+const SB = "https://scyfldezhztapttcyenr.supabase.co";
+const KEY = "sb_publishable_XVqZASfCKdWY-lOwnJOgvw_KN2nunZ5";
+let CACHE = null;
+
+async function loadAll(force) {
+  if (CACHE && !force) return CACHE;
+  try {
+    const r = await fetch(SB + "/rest/v1/prototype_sessions?select=*&order=session_started.desc&limit=500", {
+      headers: { apikey: KEY, Authorization: "Bearer " + KEY }
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    CACHE = await r.json();
+    renderList();
+    return CACHE;
+  } catch (e) {
+    document.getElementById("users-body").innerHTML = "<tr><td colspan=7 class=empty>Could not load: " + e.message + "</td></tr>";
+    return [];
+  }
+}
+
+function pillCls(nwi) {
+  if (nwi >= 75) return "pill green";
+  if (nwi >= 55) return "pill amber";
+  return "pill red";
+}
+
+function renderList() {
+  const rows = CACHE || [];
+  if (!rows.length) {
+    document.getElementById("tiles").innerHTML = "<div class=empty>No sessions yet.</div>";
+    document.getElementById("users-body").innerHTML = "<tr><td colspan=7 class=empty>No sessions saved yet.</td></tr>";
+    return;
+  }
+  const userMap = {};
+  rows.forEach(r => {
+    const key = (r.nurse_name || "(unknown)") + "::" + (r.unit || "");
+    if (!userMap[key]) userMap[key] = { nurse_name: r.nurse_name || "(unknown)", unit: r.unit || "-", sessions: [], latest: null };
+    userMap[key].sessions.push(r);
+    if (!userMap[key].latest || new Date(r.session_started) > new Date(userMap[key].latest.session_started)) userMap[key].latest = r;
+  });
+  const users = Object.values(userMap).sort((a, b) => new Date(b.latest.session_started) - new Date(a.latest.session_started));
+  const total = rows.length;
+  const uniq = users.length;
+  const avg = Math.round(rows.reduce((a, b) => a + (b.nwi_pct || 0), 0) / Math.max(1, rows.length));
+  const expert = rows.filter(r => r.nwi_pct >= 70).length;
+
+  document.getElementById("tiles").innerHTML =
+    "<div class=tile><div class=tile-num>" + uniq + "</div><div class=tile-lbl>Unique Nurses</div></div>" +
+    "<div class=tile><div class=tile-num>" + total + "</div><div class=tile-lbl>Total Sessions</div></div>" +
+    "<div class=tile><div class=tile-num>" + avg + "%</div><div class=tile-lbl>Average NWI</div></div>" +
+    "<div class=tile><div class=tile-num>" + expert + "</div><div class=tile-lbl>Expert Sessions</div></div>";
+
+  // Store users array globally so click handlers can look up by index
+  window._USERS = users;
+  document.getElementById("users-body").innerHTML = users.map((u, i) => {
+    const r = u.latest;
+    const nwi = r.nwi_pct || 0;
+    const cls = pillCls(nwi);
+    const date = new Date(r.session_started).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return "<tr onclick=showDetail(" + i + ")><td><strong>" + u.nurse_name + "</strong></td><td>" + u.unit + "</td><td>" + u.sessions.length + "</td><td><span class='" + cls + "'>" + nwi + "%</span></td><td>" + (r.expert_count || 0) + " / " + (r.total_nodes || 0) + "</td><td>" + date + "</td><td><button class=review-btn>Review &rarr;</button></td></tr>";
+  }).join("");
+}
+
+function showDetail(idx) {
+  const u = window._USERS[idx];
+  if (!u) return;
+  const us = u.sessions.slice().sort((a, b) => new Date(b.session_started) - new Date(a.session_started));
+  const latest = us[0], total = us.length;
+  const avg = Math.round(us.reduce((a, b) => a + (b.nwi_pct || 0), 0) / total);
+  const best = Math.max.apply(null, us.map(s => s.nwi_pct || 0));
+  const trend = us.length > 1 ? (us[0].nwi_pct - us[us.length - 1].nwi_pct) : 0;
+  const doms = ["d1_ambiguity","d2_communication","d3_ethics","d4_psych_safety","d5_deterioration","d6_pharmacology","d7_sbar","d8_priority","d9_culture","d11_social","d12_moral"];
+  const dlbl = {d1_ambiguity:"D1 Ambiguity",d2_communication:"D2 Therapeutic Comm",d3_ethics:"D3 Ethics",d4_psych_safety:"D4 Psych Safety",d5_deterioration:"D5 Deterioration",d6_pharmacology:"D6 Pharmacology",d7_sbar:"D7 SBAR",d8_priority:"D8 Prioritisation",d9_culture:"D9 Cultural Humility",d11_social:"D11 Social Complexity",d12_moral:"D12 Moral Resilience"};
+
+  let h = "<div class=detail-head><div><h2>" + u.nurse_name + "</h2><div class=meta>" + (latest.unit || "Unit not specified") + " &middot; " + total + " session" + (total === 1 ? "" : "s") + "</div></div><button class=back-btn onclick=hideDetail()>&larr; Back</button></div>";
+  h += "<div class=tiles>";
+  h += "<div class=tile><div class=tile-num>" + (latest.nwi_pct || 0) + "%</div><div class=tile-lbl>Latest NWI</div></div>";
+  h += "<div class=tile><div class=tile-num>" + avg + "%</div><div class=tile-lbl>Average</div></div>";
+  h += "<div class=tile><div class=tile-num>" + best + "%</div><div class=tile-lbl>Best</div></div>";
+  h += "<div class=tile><div class=tile-num>" + (trend > 0 ? "+" : "") + trend + "pt</div><div class=tile-lbl>Trend</div></div>";
+  h += "</div>";
+  h += "<div class=card><div class=card-head><h2>Latest Session - Domain Breakdown</h2></div><div style='padding:20px'><div class=dom-grid>";
+  doms.forEach(d => {
+    const v = latest[d];
+    if (v == null) return;
+    const c = v >= 75 ? "green" : v >= 55 ? "amber" : "red";
+    h += "<div class=dom-row><div class=dom-lbl>" + dlbl[d] + "</div><div class=dom-bar><div class='dom-fill " + c + "' style='width:" + v + "%'></div></div><div class=dom-num>" + v + "%</div></div>";
+  });
+  h += "</div></div></div>";
+  h += "<div class=card><div class=card-head><h2>COGNITA Behavioral Metrics</h2></div><div style='padding:20px'><div class=cog-grid>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.avg_decision_s || "-") + "s</div><div class=cog-lbl>Avg Decision</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.rapid_clicks || 0) + "</div><div class=cog-lbl>Rapid Clicks</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.backtracks || 0) + "</div><div class=cog-lbl>Backtracks</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.self_corrections || 0) + "</div><div class=cog-lbl>Self-Corrections</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.total_revisions || 0) + "</div><div class=cog-lbl>Revisions</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.aria_engagements || 0) + "</div><div class=cog-lbl>ARIA Use</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.position_bias_a != null ? latest.position_bias_a + "%" : "-") + "</div><div class=cog-lbl>Position Bias A</div></div>";
+  h += "<div class=cog-cell><div class=cog-num>" + (latest.confirmed_gaps || 0) + "</div><div class=cog-lbl>Confirmed Gaps</div></div>";
+  h += "</div></div></div>";
+  h += "<div class=card><div class=card-head><h2>Session History (" + total + ")</h2></div><div style='overflow-x:auto'><table><thead><tr><th>Date</th><th>NWI</th><th>Expert/Total</th><th>Avg Time</th><th>ARIA</th></tr></thead><tbody>";
+  us.forEach(s => {
+    const dt = new Date(s.session_started).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+    const c = pillCls(s.nwi_pct || 0);
+    h += "<tr><td>" + dt + "</td><td><span class='" + c + "'>" + (s.nwi_pct || 0) + "%</span></td><td>" + (s.expert_count || 0) + "/" + (s.total_nodes || 0) + "</td><td>" + (s.avg_decision_s || "-") + "s</td><td>" + (s.aria_engagements || 0) + "</td></tr>";
+  });
+  h += "</tbody></table></div></div>";
+  if (latest.reflection) {
+    h += "<div class=card><div class=card-head><h2>Latest Reflection</h2></div><div style='padding:20px'><div class=refl-box>" + latest.reflection.replace(/</g, "&lt;") + "</div></div></div>";
+  }
+  document.getElementById("detail-body").innerHTML = h;
+  document.getElementById("list-view").classList.add("hidden");
+  document.getElementById("detail-view").classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function hideDetail() {
+  document.getElementById("list-view").classList.remove("hidden");
+  document.getElementById("detail-view").classList.remove("active");
+  window.scrollTo(0, 0);
+}
 </script>
 </body>
 </html>
